@@ -15,7 +15,7 @@ const LoginModal = ({ show, handleClose, setUser }) => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/auth/login`,
+        "https://depie-backend.vercel.app/api/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

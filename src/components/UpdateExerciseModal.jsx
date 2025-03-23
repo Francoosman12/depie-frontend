@@ -22,7 +22,7 @@ const UpdateExerciseModal = ({ show, onHide, ejercicio, onUpdate }) => {
     e.preventDefault();
     axios
       .put(
-        `${process.env.REACT_APP_API_URL}/api/ejercicios/${ejercicio._id}`,
+        `https://depie-backend.vercel.app/api/ejercicios/${ejercicio._id}`,
         formData
       )
       .then((response) => {

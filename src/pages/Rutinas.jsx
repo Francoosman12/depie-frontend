@@ -135,7 +135,7 @@ const Rutinas = () => {
     };
 
     axios
-      .post(`${process.env.REACT_APP_API_URL}/api/rutinas`, nuevaRutina)
+      .post("https://depie-backend.vercel.app/api/rutinas", nuevaRutina)
       .then(() => {
         alert("Rutina creada exitosamente");
         // Reiniciar el formulario

@@ -25,7 +25,7 @@ const VerRutinas = ({ user }) => {
     if (user) {
       axios
         .get(
-          `${process.env.REACT_APP_API_URL}/api/rutinas?alumno_id=${user._id}`
+          `https://depie-backend.vercel.app/api/rutinas?alumno_id=${user._id}`
         ) // Usa el ID dinámico del usuario logueado
         .then((response) => {
           const rutinasDelAlumno = response.data;

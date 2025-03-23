@@ -35,7 +35,7 @@ const Usuarios = () => {
   // Eliminar un usuario
   const handleDelete = (id) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}/api/usuarios/${id}`)
+      .delete("https://depie-backend.vercel.app/api/usuarios/${id}")
       .then(() => {
         alert("Usuario eliminado correctamente");
         setUsuarios(usuarios.filter((usuario) => usuario._id !== id));

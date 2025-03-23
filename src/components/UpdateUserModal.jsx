@@ -57,7 +57,7 @@ const UpdateUserModal = ({ show, onHide, usuario, onUpdate }) => {
     e.preventDefault();
     axios
       .put(
-        `${process.env.REACT_APP_API_URL}/api/usuarios/${usuario._id}`,
+        `https://depie-backend.vercel.app/api/usuarios/${usuario._id}`,
         formData
       )
       .then((response) => {

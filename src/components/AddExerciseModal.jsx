@@ -21,7 +21,7 @@ const AddExerciseModal = ({ show, onHide, onAdd }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post(`${process.env.REACT_APP_API_URL}/api/ejercicios`, formData)
+      .post("https://depie-backend.vercel.app/api/ejercicios", formData)
       .then((response) => {
         alert("Ejercicio agregado exitosamente");
         onAdd(response.data); // Notificar al padre que un ejercicio fue agregado

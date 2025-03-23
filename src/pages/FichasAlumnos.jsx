@@ -23,7 +23,7 @@ const FichasAlumnos = () => {
 
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/usuarios`
+        "https://depie-backend.vercel.app/api/usuarios"
       );
       setAlumnos(response.data); // Guardar el listado de alumnos
     } catch (err) {

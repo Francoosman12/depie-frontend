@@ -49,7 +49,7 @@ const Ejercicios = () => {
   // Eliminar un ejercicio
   const handleDelete = (id) => {
     axios
-      .delete(`${process.env.REACT_APP_API_URL}/api/ejercicios/${id}`)
+      .delete(`https://depie-backend.vercel.app/api/ejercicios/${id}`)
       .then(() => {
         alert("Ejercicio eliminado correctamente");
         setEjercicios(ejercicios.filter((ejercicio) => ejercicio._id !== id));
