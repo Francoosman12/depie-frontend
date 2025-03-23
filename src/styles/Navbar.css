@@ -1,0 +1,25 @@
+/* NavigationBar.css */
+
+/* Estilo base del navbar */
+.navigation-bar {
+    background-color: black;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+  }
+  
+  /* Estilo cuando se hace scroll */
+  .navigation-bar.scrolled {
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo semitransparente */
+    opacity: 0.9;
+  }
+  
+  .navbar-nav .nav-link,
+.navbar-nav .dropdown-item {
+  color: white !important; /* Forzar color blanco */
+  background-color: black;
+}
+
+.navbar-nav .dropdown-item:hover {
+  background-color: red; /* Ejemplo de color al pasar el mouse */
+  color: white;
+}

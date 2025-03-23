@@ -1,0 +1,33 @@
+/* Novedades.css */
+
+/* Contenedor principal de Novedades */
+.novedades-container {
+    height: 100vh; /* Ocupa todo el alto del viewport */
+    background-color: #f4f4f4; /* Color de fondo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; /* Espaciado */
+  }
+  
+  /* Título de la sección */
+  .novedades-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Texto descriptivo */
+  .novedades-text {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  /* Botón */
+  .btn-primary {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+  
