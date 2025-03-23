@@ -13,7 +13,7 @@ const Usuarios = () => {
   // Obtener usuarios del backend
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/usuarios`)
+      .get("https://depie-backend.vercel.app/api/usuarios")
       .then((response) => setUsuarios(response.data))
       .catch((error) => console.error("Error al obtener los usuarios:", error));
   }, []);
