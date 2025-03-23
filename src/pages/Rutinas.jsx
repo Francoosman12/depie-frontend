@@ -64,12 +64,12 @@ const Rutinas = () => {
   // Obtener usuarios y ejercicios
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/usuarios")
+      .get("https://depie-backend.vercel.app/api/usuarios")
       .then((response) => setUsuarios(response.data))
       .catch((error) => console.error("Error al obtener usuarios:", error));
 
     axios
-      .get("http://localhost:5000/api/ejercicios")
+      .get("https://depie-backend.vercel.app/api/ejercicios")
       .then((response) => setEjercicios(response.data))
       .catch((error) => console.error("Error al obtener ejercicios:", error));
   }, []);

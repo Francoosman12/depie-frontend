@@ -27,7 +27,7 @@ const Ejercicios = () => {
   // Obtener ejercicios del backend
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/ejercicios`)
+      .get("https://depie-backend.vercel.app/api/ejercicios")
       .then((response) => setEjercicios(response.data))
       .catch((error) =>
         console.error("Error al obtener los ejercicios:", error)
