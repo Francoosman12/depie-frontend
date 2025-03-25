@@ -4,7 +4,9 @@ import { Nav, Table, Button, Form } from "react-bootstrap";
 const SemanaRutina = ({
   semanas,
   ejercicios,
+  comentarioProfesor,
   handleInputChange,
+  handleComentarioProfesorChange,
   handleRemoveEjercicio,
   handleAddEjercicio,
 }) => {
@@ -25,6 +27,18 @@ const SemanaRutina = ({
         ))}
       </Nav>
 
+      {/* Comentario del Profesor */}
+      <Form.Group controlId="comentarioProfesor">
+        <Form.Label>Comentario del Profesor</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={3}
+          value={comentarioProfesor}
+          onChange={(e) => handleComentarioProfesorChange(e.target.value)}
+          placeholder="Escribe un comentario general para la rutina"
+        />
+      </Form.Group>
+
       {semanas.length > 0 && (
         <div>
           <h4 className="mt-4">Semana {semanas[activeSemana].numeroSemana}</h4>
@@ -35,9 +49,11 @@ const SemanaRutina = ({
                 <thead>
                   <tr>
                     <th>Ejercicio</th>
+                    <th>Bloque</th>
                     <th>Series</th>
                     <th>Repeticiones</th>
-                    <th>Peso Sugerido</th>
+                    <th>RIP</th>
+
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -45,6 +61,30 @@ const SemanaRutina = ({
                   {dia.ejercicios.map((ejercicio, index) => (
                     <tr key={index}>
                       <td>{ejercicio.nombre}</td>
+                      <td>
+                        <Form.Select
+                          value={ejercicio.bloque || "A"}
+                          onChange={(e) =>
+                            handleInputChange(
+                              semanas[activeSemana].numeroSemana,
+                              dia.dia,
+                              index,
+                              "bloque",
+                              e.target.value
+                            )
+                          }
+                          className="form-control-sm"
+                        >
+                          <option value="A">A</option>
+                          <option value="B">B</option>
+                          <option value="C">C</option>
+                          <option value="D">D</option>
+                          <option value="E">E</option>
+                          <option value="F">F</option>
+                          <option value="Calentamiento">Calentamiento</option>
+                          <option value="Parte Final">Parte Final</option>
+                        </Form.Select>
+                      </td>
                       <td>
                         <Form.Control
                           type="number"
@@ -93,6 +133,7 @@ const SemanaRutina = ({
                           className="form-control-sm"
                         />
                       </td>
+
                       <td>
                         <Button
                           variant="danger"
@@ -112,6 +153,8 @@ const SemanaRutina = ({
                   ))}
                 </tbody>
               </Table>
+
+              {/* Agregar Ejercicio */}
               <Form.Group
                 controlId={`selectEjercicio-${semanas[activeSemana].numeroSemana}-${dia.dia}`}
               >

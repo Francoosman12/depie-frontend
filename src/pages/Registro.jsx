@@ -43,7 +43,7 @@ const Registro = () => {
 
     try {
       const response = await axios.post(
-        "https://depie-backend.vercel.app/api/usuarios",
+        "http://localhost:5000/api/usuarios",
         formData
       );
       setSuccess(true);

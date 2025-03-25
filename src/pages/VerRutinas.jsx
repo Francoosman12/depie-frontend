@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, Row, Col, Button, Modal, Nav } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Row,
+  Col,
+  Button,
+  Modal,
+  Nav,
+  Form,
+} from "react-bootstrap";
 import axios from "axios";
+import EjercicioModal from "../components/EjercicioModal";
+import DiaRutina from "../components/DiaRutina";
 
 // Función para convertir un enlace a formato embed
 const getEmbedUrl = (url) => {
@@ -15,136 +26,152 @@ const getEmbedUrl = (url) => {
 };
 
 const VerRutinas = ({ user }) => {
-  const [rutina, setRutina] = useState(null);
+  const [rutinas, setRutinas] = useState([]); // Todas las rutinas disponibles
+  const [selectedRutina, setSelectedRutina] = useState(null); // Rutina seleccionada
   const [selectedEjercicio, setSelectedEjercicio] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [activeSemana, setActiveSemana] = useState(0);
+  const [comentariosDiarios, setComentariosDiarios] = useState({}); // Comentarios diarios del alumno
 
-  // Obtener la rutina del alumno logueado dinámicamente
+  // Obtener todas las rutinas del usuario
   useEffect(() => {
     if (user) {
       axios
-        .get(
-          `https://depie-backend.vercel.app/api/rutinas?alumno_id=${user._id}`
-        ) // Usa el ID dinámico del usuario logueado
+        .get(`http://localhost:5000/api/rutinas?alumno_id=${user._id}`)
         .then((response) => {
           const rutinasDelAlumno = response.data;
-          if (rutinasDelAlumno && rutinasDelAlumno.length > 0) {
-            setRutina(rutinasDelAlumno[0]);
-          } else {
-            console.warn("No se encontraron rutinas para este alumno.");
-            setRutina(null);
+          setRutinas(rutinasDelAlumno); // Guardar todas las rutinas
+          if (rutinasDelAlumno.length > 0) {
+            setSelectedRutina(rutinasDelAlumno[0]); // Seleccionar la primera rutina por defecto
           }
         })
-        .catch((error) => {
-          console.error("Error al obtener la rutina asignada:", error);
-        });
+        .catch((error) => console.error("Error al obtener rutinas:", error));
     }
-  });
+  }, []); // Array de dependencias vacío para ejecutar solo al cargar
 
   const handleShowEjercicio = (ejercicio) => {
     setSelectedEjercicio(ejercicio);
     setShowModal(true);
   };
 
+  // Manejar el cambio del comentario diario del alumno
+  const handleComentarioDiarioChange = (dia, comentario) => {
+    setComentariosDiarios({ ...comentariosDiarios, [dia]: comentario });
+  };
+
+  // Guardar el progreso del alumno (peso utilizado y comentarios)
+  const handleSaveProgress = () => {
+    if (!selectedRutina) return; // Asegurarse de que hay una rutina seleccionada
+    const progreso = {
+      comentariosDiarios,
+      rutina: selectedRutina._id, // Usar la rutina seleccionada
+    };
+
+    axios
+      .post("http://localhost:5000/api/progreso", progreso) // Endpoint para guardar progreso
+      .then((response) => {
+        alert("Progreso guardado exitosamente");
+      })
+      .catch((error) => {
+        console.error("Error al guardar el progreso:", error);
+        alert("Hubo un error al guardar el progreso");
+      });
+  };
+
   return (
     <Container className="pb-5 pt-5 mt-5">
-      <h1 className="my-4 text-center">Rutina Asignada</h1>
-      {rutina ? (
+      <h1 className="my-4 text-center">Rutinas Asignadas</h1>
+      {rutinas.length > 0 ? (
         <>
-          <h3>{rutina.nombre}</h3>
-          <p>{rutina.descripcion}</p>
-          <Nav
-            variant="tabs"
-            activeKey={activeSemana}
-            onSelect={(key) => setActiveSemana(parseInt(key))}
-          >
-            {rutina.semanas.map((semana, index) => (
-              <Nav.Item key={index}>
-                <Nav.Link eventKey={index}>
-                  Semana {semana.numeroSemana}
-                </Nav.Link>
-              </Nav.Item>
-            ))}
-          </Nav>
-
-          {rutina.semanas.length > 0 && (
-            <div className="mt-4">
-              <h4 className="text-success">
-                Semana {rutina.semanas[activeSemana].numeroSemana}
-              </h4>
-              {rutina.semanas[activeSemana].dias.map((dia, dayIndex) => (
-                <div key={dayIndex} className="mb-4">
-                  <h5 className="text-primary">{dia.dia}</h5>
-                  <Row>
-                    {dia.ejercicios.map((ejercicio, idx) => (
-                      <Col md={4} key={idx} className="mb-3">
-                        <Card>
-                          <Card.Body>
-                            <Card.Title>{ejercicio.nombre}</Card.Title>
-                            <Card.Text>
-                              <strong>Series:</strong> {ejercicio.series} <br />
-                              <strong>Repeticiones:</strong>{" "}
-                              {ejercicio.repeticiones} <br />
-                              <strong>Peso sugerido:</strong>{" "}
-                              {ejercicio.peso_sugerido || "No especificado"}
-                            </Card.Text>
-                            <Button
-                              variant="info"
-                              onClick={() => handleShowEjercicio(ejercicio)}
-                            >
-                              Ver Detalles
-                            </Button>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    ))}
-                  </Row>
-                </div>
+          {/* Selector de rutinas */}
+          <Form.Group controlId="selectRutina" className="">
+            <Form.Label>Selecciona una rutina:</Form.Label>
+            <Form.Select
+              value={selectedRutina ? selectedRutina._id : ""}
+              onChange={(e) => {
+                const rutinaSeleccionada = rutinas.find(
+                  (r) => r._id === e.target.value
+                );
+                setSelectedRutina(rutinaSeleccionada);
+              }}
+              className="mb-5"
+            >
+              <option value="">Seleccionar una rutina</option>
+              {rutinas.map((r) => (
+                <option key={r._id} value={r._id}>
+                  {r.nombre}
+                </option>
               ))}
-            </div>
+            </Form.Select>
+          </Form.Group>
+
+          {selectedRutina && (
+            <>
+              <h3>{selectedRutina.nombre}</h3>
+              <p>{selectedRutina.descripcion}</p>
+              <Nav
+                variant="tabs"
+                activeKey={activeSemana}
+                onSelect={(key) => setActiveSemana(parseInt(key))}
+              >
+                {selectedRutina.semanas.map((semana, index) => (
+                  <Nav.Item key={index} className="bg-light">
+                    <Nav.Link eventKey={index} className="text-black">
+                      Semana {semana.numeroSemana}
+                    </Nav.Link>
+                  </Nav.Item>
+                ))}
+              </Nav>
+
+              {selectedRutina.semanas.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-black">
+                    Semana {selectedRutina.semanas[activeSemana].numeroSemana}
+                  </h4>
+                  {selectedRutina.semanas[activeSemana].dias.map(
+                    (dia, dayIndex) => (
+                      <DiaRutina
+                        key={dayIndex}
+                        dia={dia}
+                        selectedRutinaId={selectedRutina._id}
+                        comentariosDiarios={comentariosDiarios}
+                        handleShowEjercicio={handleShowEjercicio}
+                        handleComentarioDiarioChange={
+                          handleComentarioDiarioChange
+                        }
+                      />
+                    )
+                  )}
+                </div>
+              )}
+              <Button
+                variant="primary"
+                className="mt-4"
+                onClick={handleSaveProgress}
+              >
+                Guardar Progreso
+              </Button>
+            </>
           )}
         </>
       ) : (
-        <p>Cargando rutina...</p>
+        <p>Cargando rutinas...</p>
       )}
 
       {/* Modal para Detalles del Ejercicio */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Detalles del Ejercicio</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedEjercicio && (
-            <div>
-              <h5>{selectedEjercicio.nombre}</h5>
-              <p>
-                <strong>Series:</strong> {selectedEjercicio.series} <br />
-                <strong>Repeticiones:</strong> {selectedEjercicio.repeticiones}{" "}
-                <br />
-                <strong>Peso sugerido:</strong>{" "}
-                {selectedEjercicio.peso_sugerido || "No especificado"}
-              </p>
-              {selectedEjercicio.ejercicio_id?.video_url && (
-                <div className="ratio ratio-16x9">
-                  <iframe
-                    src={getEmbedUrl(selectedEjercicio.ejercicio_id.video_url)}
-                    title="Video del Ejercicio"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              )}
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <EjercicioModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        selectedEjercicio={selectedEjercicio}
+        selectedRutinaId={selectedRutina ? selectedRutina._id : null} // Validación añadida
+        getEmbedUrl={getEmbedUrl}
+        handleEjercicioChange={(nuevoValor) =>
+          setSelectedEjercicio({
+            ...selectedEjercicio,
+            peso_utilizado: nuevoValor,
+          })
+        }
+      />
     </Container>
   );
 };

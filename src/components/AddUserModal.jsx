@@ -31,7 +31,7 @@ const AddUserModal = ({ show, onHide, onAdd }) => {
     console.log("API_URL:", process.env.REACT_APP_API_URL);
 
     axios
-      .post("https://depie-backend.vercel.app/api/usuarios", formData)
+      .post("http://localhost:5000/api/usuarios", formData)
       .then((response) => {
         alert("Usuario agregado correctamente");
         onAdd(response.data); // Notifica al padre que un usuario ha sido agregado

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Form, Button, Row, Col, Table } from "react-bootstrap";
+import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import SemanaRutina from "../components/SemanaRutina";
 
@@ -21,60 +21,26 @@ const Rutinas = () => {
         { dia: "Domingo", ejercicios: [] },
       ],
     },
-    {
-      numeroSemana: 2,
-      dias: [
-        { dia: "Lunes", ejercicios: [] },
-        { dia: "Martes", ejercicios: [] },
-        { dia: "Miércoles", ejercicios: [] },
-        { dia: "Jueves", ejercicios: [] },
-        { dia: "Viernes", ejercicios: [] },
-        { dia: "Sábado", ejercicios: [] },
-        { dia: "Domingo", ejercicios: [] },
-      ],
-    },
-    {
-      numeroSemana: 3,
-      dias: [
-        { dia: "Lunes", ejercicios: [] },
-        { dia: "Martes", ejercicios: [] },
-        { dia: "Miércoles", ejercicios: [] },
-        { dia: "Jueves", ejercicios: [] },
-        { dia: "Viernes", ejercicios: [] },
-        { dia: "Sábado", ejercicios: [] },
-        { dia: "Domingo", ejercicios: [] },
-      ],
-    },
-    {
-      numeroSemana: 4,
-      dias: [
-        { dia: "Lunes", ejercicios: [] },
-        { dia: "Martes", ejercicios: [] },
-        { dia: "Miércoles", ejercicios: [] },
-        { dia: "Jueves", ejercicios: [] },
-        { dia: "Viernes", ejercicios: [] },
-        { dia: "Sábado", ejercicios: [] },
-        { dia: "Domingo", ejercicios: [] },
-      ],
-    },
+    // Semanas 2, 3, 4...
   ]);
   const [nombreRutina, setNombreRutina] = useState("");
   const [descripcionRutina, setDescripcionRutina] = useState("");
+  const [comentarioProfesor, setComentarioProfesor] = useState(""); // Comentario del profesor
+  const [fechaInicio, setFechaInicio] = useState(""); // Fecha de inicio
 
   // Obtener usuarios y ejercicios
   useEffect(() => {
     axios
-      .get("https://depie-backend.vercel.app/api/usuarios")
+      .get("http://localhost:5000/api/usuarios")
       .then((response) => setUsuarios(response.data))
       .catch((error) => console.error("Error al obtener usuarios:", error));
 
     axios
-      .get("https://depie-backend.vercel.app/api/ejercicios")
+      .get("http://localhost:5000/api/ejercicios")
       .then((response) => setEjercicios(response.data))
       .catch((error) => console.error("Error al obtener ejercicios:", error));
   }, []);
 
-  // Manejar cambios en los días y ejercicios por semana
   const handleAddEjercicio = (numeroSemana, dia, ejercicio) => {
     const updatedSemanas = semanas.map((semana) =>
       semana.numeroSemana === numeroSemana
@@ -122,7 +88,6 @@ const Rutinas = () => {
     setSemanas(updatedSemanas);
   };
 
-  // Manejar el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -132,17 +97,20 @@ const Rutinas = () => {
       alumno_id: selectedUsuario,
       entrenador_id: selectedEntrenador,
       semanas,
+      fecha_asignacion: fechaInicio,
+      comentario_profesor: comentarioProfesor,
     };
 
     axios
-      .post("https://depie-backend.vercel.app/api/rutinas", nuevaRutina)
+      .post("http://localhost:5000/api/rutinas", nuevaRutina)
       .then(() => {
         alert("Rutina creada exitosamente");
-        // Reiniciar el formulario
         setNombreRutina("");
         setDescripcionRutina("");
+        setComentarioProfesor("");
         setSelectedUsuario("");
         setSelectedEntrenador("");
+        setFechaInicio("");
         setSemanas([
           {
             numeroSemana: 1,
@@ -156,7 +124,6 @@ const Rutinas = () => {
               { dia: "Domingo", ejercicios: [] },
             ],
           },
-          // Repetir para semanas 2, 3, 4...
         ]);
       })
       .catch((error) => {
@@ -183,7 +150,7 @@ const Rutinas = () => {
           }
         : semana
     );
-    setSemanas(updatedSemanas); // Actualiza el estado
+    setSemanas(updatedSemanas);
   };
 
   return (
@@ -252,16 +219,30 @@ const Rutinas = () => {
             </Form.Group>
           </Col>
         </Row>
-        {/* Renderizar las semanas usando el componente SemanaRutina */}
-
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="formFechaInicio">
+              <Form.Label>Fecha de Inicio</Form.Label>
+              <Form.Control
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
         <SemanaRutina
           semanas={semanas}
           ejercicios={ejercicios}
+          comentarioProfesor={comentarioProfesor}
           handleInputChange={handleInputChange}
+          handleComentarioProfesorChange={(nuevoComentario) =>
+            setComentarioProfesor(nuevoComentario)
+          }
           handleRemoveEjercicio={handleRemoveEjercicio}
           handleAddEjercicio={handleAddEjercicio}
         />
-
         <Button variant="primary" type="submit">
           Guardar Rutina
         </Button>

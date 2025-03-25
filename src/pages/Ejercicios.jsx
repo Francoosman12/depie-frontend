@@ -27,7 +27,7 @@ const Ejercicios = () => {
   // Obtener ejercicios del backend
   useEffect(() => {
     axios
-      .get("https://depie-backend.vercel.app/api/ejercicios")
+      .get("http://localhost:5000/api/ejercicios")
       .then((response) => setEjercicios(response.data))
       .catch((error) =>
         console.error("Error al obtener los ejercicios:", error)
@@ -49,7 +49,7 @@ const Ejercicios = () => {
   // Eliminar un ejercicio
   const handleDelete = (id) => {
     axios
-      .delete(`https://depie-backend.vercel.app/api/ejercicios/${id}`)
+      .delete(`http://localhost:5000/api/ejercicios/${id}`)
       .then(() => {
         alert("Ejercicio eliminado correctamente");
         setEjercicios(ejercicios.filter((ejercicio) => ejercicio._id !== id));

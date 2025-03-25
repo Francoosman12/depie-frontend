@@ -22,9 +22,7 @@ const FichasAlumnos = () => {
     setError("");
 
     try {
-      const response = await axios.get(
-        "https://depie-backend.vercel.app/api/usuarios"
-      );
+      const response = await axios.get("http://localhost:5000/api/usuarios");
       setAlumnos(response.data); // Guardar el listado de alumnos
     } catch (err) {
       console.error("Error al cargar alumnos:", err);

@@ -21,10 +21,7 @@ const UpdateExerciseModal = ({ show, onHide, ejercicio, onUpdate }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .put(
-        `https://depie-backend.vercel.app/api/ejercicios/${ejercicio._id}`,
-        formData
-      )
+      .put(`http://localhost:5000/api/ejercicios/${ejercicio._id}`, formData)
       .then((response) => {
         alert("Ejercicio actualizado exitosamente");
         onUpdate(response.data); // Notificar al padre que los datos han sido actualizados

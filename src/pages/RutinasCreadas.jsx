@@ -9,7 +9,7 @@ const RutinasCreadas = () => {
 
   useEffect(() => {
     axios
-      .get("https://depie-backend.vercel.app/api/rutinas") // Endpoint para obtener todas las rutinas
+      .get("http://localhost:5000/api/rutinas") // Endpoint para obtener todas las rutinas
       .then((response) => {
         setRutinas(response.data);
       })
