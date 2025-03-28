@@ -37,7 +37,9 @@ const VerRutinas = ({ user }) => {
   useEffect(() => {
     if (user) {
       axios
-        .get(`http://localhost:5000/api/rutinas?alumno_id=${user._id}`)
+        .get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/rutinas?alumno_id=${user._id}`
+        )
         .then((response) => {
           const rutinasDelAlumno = response.data;
           setRutinas(rutinasDelAlumno); // Guardar todas las rutinas
@@ -68,7 +70,7 @@ const VerRutinas = ({ user }) => {
     };
 
     axios
-      .post("http://localhost:5000/api/progreso", progreso) // Endpoint para guardar progreso
+      .post(`${process.env.REACT_APP_BACKEND_URL}/api/progreso`, progreso) // Endpoint para guardar progreso
       .then((response) => {
         alert("Progreso guardado exitosamente");
       })

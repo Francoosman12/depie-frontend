@@ -43,7 +43,7 @@ const Registro = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/usuarios",
+        `${process.env.REACT_APP_BACKEND_URL}/api/usuarios`,
         formData
       );
       setSuccess(true);

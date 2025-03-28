@@ -14,11 +14,14 @@ const LoginModal = ({ show, handleClose, setUser }) => {
     setError(""); // Limpiar errores previos
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }), // Enviar email y contraseña
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }), // Enviar email y contraseña
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();

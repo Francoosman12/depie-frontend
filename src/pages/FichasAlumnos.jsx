@@ -22,7 +22,9 @@ const FichasAlumnos = () => {
     setError("");
 
     try {
-      const response = await axios.get("http://localhost:5000/api/usuarios");
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/usuarios`
+      );
       setAlumnos(response.data); // Guardar el listado de alumnos
     } catch (err) {
       console.error("Error al cargar alumnos:", err);

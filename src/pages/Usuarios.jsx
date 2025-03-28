@@ -13,7 +13,7 @@ const Usuarios = () => {
   // Obtener usuarios del backend
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/usuarios")
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/usuarios`)
       .then((response) => setUsuarios(response.data))
       .catch((error) => console.error("Error al obtener los usuarios:", error));
   }, []);
@@ -35,7 +35,7 @@ const Usuarios = () => {
   // Eliminar un usuario
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/api/usuarios/${id}`)
+      .delete(`${process.env.REACT_APP_BACKEND_URL}/api/usuarios/${id}`)
       .then(() => {
         alert("Usuario eliminado correctamente");
         setUsuarios(usuarios.filter((usuario) => usuario._id !== id));

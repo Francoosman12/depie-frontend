@@ -21,7 +21,10 @@ const UpdateExerciseModal = ({ show, onHide, ejercicio, onUpdate }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .put(`http://localhost:5000/api/ejercicios/${ejercicio._id}`, formData)
+      .put(
+        `${process.env.REACT_APP_BACKEND_URL}/api/ejercicios/${ejercicio._id}`,
+        formData
+      )
       .then((response) => {
         alert("Ejercicio actualizado exitosamente");
         onUpdate(response.data); // Notificar al padre que los datos han sido actualizados

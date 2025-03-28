@@ -9,7 +9,7 @@ const RutinasCreadas = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/rutinas") // Endpoint para obtener todas las rutinas
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/rutinas`) // Endpoint para obtener todas las rutinas
       .then((response) => {
         setRutinas(response.data);
       })

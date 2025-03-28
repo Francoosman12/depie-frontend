@@ -19,7 +19,7 @@ const EjercicioModal = ({
 
     axios
       .put(
-        `http://localhost:5000/api/rutinas/${selectedRutinaId}/ejercicio/${ejercicioId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/rutinas/${selectedRutinaId}/ejercicio/${ejercicioId}`,
         { peso_utilizado: selectedEjercicio.peso_utilizado }
       )
       .then(() => {
