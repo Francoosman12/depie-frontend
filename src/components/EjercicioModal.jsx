@@ -48,12 +48,13 @@ const EjercicioModal = ({
               <strong>Peso sugerido:</strong>{" "}
               {selectedEjercicio.peso_sugerido || "No especificado"}
             </p>
-            <Form.Group className="p-4" controlId="pesoUtilizado">
+            <Form.Group className="pb-4" controlId="pesoUtilizado">
               <Form.Label>Peso utilizado:</Form.Label>
+              <p>(Introducir el peso por serie de esta manera: 8-10-12)</p>
               <Form.Control
                 type="number"
                 value={selectedEjercicio.peso_utilizado || ""}
-                placeholder="Introduce el peso utilizado"
+                placeholder="Introduce el peso utilizado 8-10-12"
                 onChange={(e) => handleEjercicioChange(e.target.value)}
               />
             </Form.Group>
