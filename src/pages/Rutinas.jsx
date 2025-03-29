@@ -31,12 +31,12 @@ const Rutinas = () => {
   // Obtener usuarios y ejercicios
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/usuarios`)
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios`)
       .then((response) => setUsuarios(response.data))
       .catch((error) => console.error("Error al obtener usuarios:", error));
 
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/ejercicios`)
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/ejercicios`)
       .then((response) => setEjercicios(response.data))
       .catch((error) => console.error("Error al obtener ejercicios:", error));
   }, []);
@@ -102,7 +102,7 @@ const Rutinas = () => {
     };
 
     axios
-      .post(`${process.env.REACT_APP_BACKEND_URL}/api/rutinas`, nuevaRutina)
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/rutinas`, nuevaRutina)
       .then(() => {
         alert("Rutina creada exitosamente");
         setNombreRutina("");

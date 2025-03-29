@@ -38,7 +38,9 @@ const VerRutinas = ({ user }) => {
     if (user) {
       axios
         .get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/rutinas?alumno_id=${user._id}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/rutinas?alumno_id=${
+            user._id
+          }`
         )
         .then((response) => {
           const rutinasDelAlumno = response.data;
@@ -70,7 +72,7 @@ const VerRutinas = ({ user }) => {
     };
 
     axios
-      .post(`${process.env.REACT_APP_BACKEND_URL}/api/progreso`, progreso) // Endpoint para guardar progreso
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/progreso`, progreso) // Endpoint para guardar progreso
       .then((response) => {
         alert("Progreso guardado exitosamente");
       })

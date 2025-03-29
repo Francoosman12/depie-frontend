@@ -23,7 +23,7 @@ const FichasAlumnos = () => {
 
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/usuarios`
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios`
       );
       setAlumnos(response.data); // Guardar el listado de alumnos
     } catch (err) {

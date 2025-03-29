@@ -22,7 +22,7 @@ const UpdateExerciseModal = ({ show, onHide, ejercicio, onUpdate }) => {
     e.preventDefault();
     axios
       .put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/ejercicios/${ejercicio._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/ejercicios/${ejercicio._id}`,
         formData
       )
       .then((response) => {

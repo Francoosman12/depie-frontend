@@ -26,7 +26,9 @@ const DiaRutina = ({
 
     axios
       .put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/rutinas/${selectedRutinaId}/comentario_dia`,
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/rutinas/${selectedRutinaId}/comentario_dia`,
         { dia: dia.dia, comentario: comentario }
       )
       .then(() => {

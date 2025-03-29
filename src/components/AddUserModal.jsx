@@ -29,9 +29,9 @@ const AddUserModal = ({ show, onHide, onAdd }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("API_URL:", process.env.REACT_APP_API_URL);
-
+    console.log("Variable de entorno:", process.env.REACT_APP_BACKEND_URL);
     axios
-      .post(`${process.env.REACT_APP_BACKEND_URL}/api/usuarios`, formData)
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios`, formData)
       .then((response) => {
         alert("Usuario agregado correctamente");
         onAdd(response.data); // Notifica al padre que un usuario ha sido agregado

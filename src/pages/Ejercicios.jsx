@@ -27,7 +27,7 @@ const Ejercicios = () => {
   // Obtener ejercicios del backend
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/ejercicios`)
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/ejercicios`)
       .then((response) => setEjercicios(response.data))
       .catch((error) =>
         console.error("Error al obtener los ejercicios:", error)
@@ -49,7 +49,7 @@ const Ejercicios = () => {
   // Eliminar un ejercicio
   const handleDelete = (id) => {
     axios
-      .delete(`${process.env.REACT_APP_BACKEND_URL}/api/ejercicios/${id}`)
+      .delete(`${import.meta.env.VITE_BACKEND_URL}/api/ejercicios/${id}`)
       .then(() => {
         alert("Ejercicio eliminado correctamente");
         setEjercicios(ejercicios.filter((ejercicio) => ejercicio._id !== id));

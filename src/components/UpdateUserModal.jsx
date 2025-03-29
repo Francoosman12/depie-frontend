@@ -57,7 +57,7 @@ const UpdateUserModal = ({ show, onHide, usuario, onUpdate }) => {
     e.preventDefault();
     axios
       .put(
-        `${process.env.REACT_APP_BACKEND_URL}/api/usuarios/${usuario._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/${usuario._id}`,
         formData
       )
       .then((response) => {
