@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MiPerfil from "./pages/MiPerfil";
 import FichasAlumnos from "./pages/FichasAlumnos";
 import NotAuthorized from "./pages/NotAuthorized";
+import Pagos from "./pages/Pagos";
 
 const App = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -117,6 +118,14 @@ const App = () => {
           element={
             <ProtectedRoute user={user} requiredRole="profesor">
               <FichasAlumnos />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pagos"
+          element={
+            <ProtectedRoute user={user} requiredRole="profesor">
+              <Pagos />
             </ProtectedRoute>
           }
         />

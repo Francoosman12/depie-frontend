@@ -31,7 +31,7 @@ const AddUserModal = ({ show, onHide, onAdd }) => {
     console.log("API_URL:", process.env.REACT_APP_API_URL);
 
     axios
-      .post("http://localhost:5000/api/usuarios", formData)
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios`, formData)
       .then((response) => {
         alert("Usuario agregado correctamente");
         onAdd(response.data); // Notifica al padre que un usuario ha sido agregado

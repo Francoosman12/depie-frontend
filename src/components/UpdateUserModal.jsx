@@ -56,7 +56,10 @@ const UpdateUserModal = ({ show, onHide, usuario, onUpdate }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .put(`http://localhost:5000/api/usuarios/${usuario._id}`, formData)
+      .put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/${usuario._id}`,
+        formData
+      )
       .then((response) => {
         alert("Usuario actualizado correctamente");
         onUpdate(response.data); // Notificar al componente padre

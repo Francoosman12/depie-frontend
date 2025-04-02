@@ -12,7 +12,7 @@ const MiPerfil = ({ user }) => {
       // Verifica si user y user._id existen
       setLoading(true);
       axios
-        .get(`http://localhost:5000/api/usuarios/${user._id}`)
+        .get(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/${user._id}`)
         .then((response) => {
           setPerfil(response.data);
           setLoading(false);
