@@ -78,6 +78,9 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                 <Nav.Link className="text-white" as={Link} to="/fichas-alumnos">
                   Fichas de Alumnos
                 </Nav.Link>
+                <Nav.Link className="text-white" as={Link} to="/pagos">
+                  Pagos
+                </Nav.Link>
               </>
             )}
 
