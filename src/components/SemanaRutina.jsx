@@ -18,7 +18,7 @@ const SemanaRutina = ({
         variant="tabs"
         activeKey={activeSemana}
         onSelect={(key) => setActiveSemana(parseInt(key))}
-        className="mb-4"
+        className="mb-4 bg-light"
       >
         {semanas.map((semana, index) => (
           <Nav.Item key={index}>

@@ -6,11 +6,14 @@ import {
   Modal,
   Alert,
   Spinner,
+  Form,
 } from "react-bootstrap";
 import axios from "axios";
 
 const FichasAlumnos = () => {
   const [alumnos, setAlumnos] = useState([]); // Estado para los alumnos
+  const [filteredAlumnos, setFilteredAlumnos] = useState([]); // Estado para los alumnos filtrados
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
   const [error, setError] = useState(""); // Estado para errores
   const [loading, setLoading] = useState(false); // Estado de carga
   const [modalVisible, setModalVisible] = useState(false); // Estado para mostrar modal
@@ -26,12 +29,27 @@ const FichasAlumnos = () => {
         `${import.meta.env.VITE_BACKEND_URL}/api/usuarios`
       );
       setAlumnos(response.data); // Guardar el listado de alumnos
+      setFilteredAlumnos(response.data); // Inicialmente mostrar todos los alumnos
     } catch (err) {
       console.error("Error al cargar alumnos:", err);
       setError("Hubo un error al cargar el listado de alumnos.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Función para manejar la búsqueda
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase(); // Convertir el término de búsqueda a minúsculas
+    setSearchTerm(term);
+
+    const filtered = alumnos.filter(
+      (alumno) =>
+        alumno.nombre.toLowerCase().includes(term) || // Filtrar por nombre
+        alumno.email.toLowerCase().includes(term) // Filtrar por email
+    );
+
+    setFilteredAlumnos(filtered);
   };
 
   // Función para manejar la apertura del modal
@@ -55,6 +73,16 @@ const FichasAlumnos = () => {
     <Container className="my-4 pb-5 pt-5 mt-5">
       <h1 className="text-center mb-4">Listado de Alumnos</h1>
 
+      {/* Input de búsqueda */}
+      <Form.Group className="mb-4" controlId="searchInput">
+        <Form.Control
+          type="text"
+          placeholder="Buscar alumno por nombre o email"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </Form.Group>
+
       {/* Mostrar errores */}
       {error && <Alert variant="danger">{error}</Alert>}
 
@@ -68,7 +96,7 @@ const FichasAlumnos = () => {
       )}
 
       {/* Mostrar la tabla con los datos de los alumnos */}
-      {!loading && alumnos.length > 0 && (
+      {!loading && filteredAlumnos.length > 0 && (
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -80,7 +108,7 @@ const FichasAlumnos = () => {
             </tr>
           </thead>
           <tbody>
-            {alumnos.map((alumno, index) => (
+            {filteredAlumnos.map((alumno, index) => (
               <tr key={alumno._id}>
                 <td>{index + 1}</td>
                 <td>{alumno.nombre}</td>
