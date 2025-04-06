@@ -21,7 +21,42 @@ const Rutinas = () => {
         { dia: "Domingo", ejercicios: [] },
       ],
     },
-    // Semanas 2, 3, 4...
+    {
+      numeroSemana: 2,
+      dias: [
+        { dia: "Lunes", ejercicios: [] },
+        { dia: "Martes", ejercicios: [] },
+        { dia: "Miércoles", ejercicios: [] },
+        { dia: "Jueves", ejercicios: [] },
+        { dia: "Viernes", ejercicios: [] },
+        { dia: "Sábado", ejercicios: [] },
+        { dia: "Domingo", ejercicios: [] },
+      ],
+    },
+    {
+      numeroSemana: 3,
+      dias: [
+        { dia: "Lunes", ejercicios: [] },
+        { dia: "Martes", ejercicios: [] },
+        { dia: "Miércoles", ejercicios: [] },
+        { dia: "Jueves", ejercicios: [] },
+        { dia: "Viernes", ejercicios: [] },
+        { dia: "Sábado", ejercicios: [] },
+        { dia: "Domingo", ejercicios: [] },
+      ],
+    },
+    {
+      numeroSemana: 4,
+      dias: [
+        { dia: "Lunes", ejercicios: [] },
+        { dia: "Martes", ejercicios: [] },
+        { dia: "Miércoles", ejercicios: [] },
+        { dia: "Jueves", ejercicios: [] },
+        { dia: "Viernes", ejercicios: [] },
+        { dia: "Sábado", ejercicios: [] },
+        { dia: "Domingo", ejercicios: [] },
+      ],
+    },
   ]);
   const [nombreRutina, setNombreRutina] = useState("");
   const [descripcionRutina, setDescripcionRutina] = useState("");

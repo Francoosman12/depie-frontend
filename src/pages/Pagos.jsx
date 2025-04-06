@@ -1,30 +1,38 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import * as XLSX from "xlsx";
-import { Button, Table } from "react-bootstrap";
+import { Button, Table, Form, Row, Col, Modal } from "react-bootstrap";
 import ModalPago from "../components/ModalPago";
+import Factura from "../components/Factura";
 
 const Pagos = () => {
   const [pagos, setPagos] = useState([]);
+  const [filteredPagos, setFilteredPagos] = useState([]); // Estado para pagos filtrados
+  const [searchTerm, setSearchTerm] = useState(""); // Búsqueda por usuario o membresía
   const [showModal, setShowModal] = useState(false);
   const [pagoSeleccionado, setPagoSeleccionado] = useState(null);
+  const [showFacturaModal, setShowFacturaModal] = useState(false); // Estado del modal de Factura
+  const [facturaSeleccionada, setFacturaSeleccionada] = useState(null); // Factura a mostrar
 
   useEffect(() => {
     obtenerPagos();
   }, []);
 
+  // Obtener los pagos desde la API
   const obtenerPagos = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/pagos`
       );
       setPagos(response.data);
+      setFilteredPagos(response.data); // Inicialmente los pagos filtrados son todos
     } catch (error) {
       console.error("Error al obtener pagos:", error);
       setPagos([]);
     }
   };
 
+  // Crear un nuevo pago
   const crearPago = async (formData) => {
     try {
       const response = await axios.post(
@@ -32,12 +40,13 @@ const Pagos = () => {
         formData
       );
       console.log("Pago creado:", response.data);
-      obtenerPagos();
+      obtenerPagos(); // Actualiza la lista de pagos
     } catch (error) {
       console.error("Error al crear el pago:", error);
     }
   };
 
+  // Actualizar un pago existente
   const actualizarPago = async (id, formData) => {
     try {
       const response = await axios.put(
@@ -45,86 +54,69 @@ const Pagos = () => {
         formData
       );
       console.log("Pago actualizado:", response.data);
-      obtenerPagos();
+      obtenerPagos(); // Actualiza la lista de pagos
     } catch (error) {
       console.error("Error al actualizar el pago:", error);
     }
   };
 
-  const imprimirFactura = (pago) => {
-    const facturaHTML = `
-      <html>
-        <head>
-          <title>Factura de Pago</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-              text-align: center;
-            }
-            .factura-container {
-              width: 80%;
-              margin: auto;
-              padding: 20px;
-              border: 1px solid #ccc;
-              border-radius: 8px;
-            }
-            h1 {
-              font-size: 24px;
-              margin-bottom: 20px;
-            }
-            .factura-detalle {
-              text-align: left;
-              margin-top: 20px;
-            }
-            .factura-detalle p {
-              margin: 5px 0;
-            }
-            .factura-footer {
-              margin-top: 30px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="factura-container">
-            <h1>Factura Electrónica</h1>
-            <div class="factura-detalle">
-              <p><strong>Usuario:</strong> ${pago.usuario.nombre}</p>
-              <p><strong>Membresía:</strong> ${pago.membresia}</p>
-              <p><strong>Método de Pago:</strong> ${pago.metodoPago}</p>
-              <p><strong>Monto:</strong> $${pago.monto}</p>
-              <p><strong>Fecha de Pago:</strong> ${new Date(
-                pago.fechaPago
-              ).toLocaleDateString()}</p>
-              <p><strong>Fecha de Expiración:</strong> ${new Date(
-                pago.fechaExpiracion
-              ).toLocaleDateString()}</p>
-              <p><strong>Descripción:</strong> ${pago.descripcion}</p>
-              <p><strong>Descuento:</strong> ${pago.descuento}%</p>
-            </div>
-            <div class="factura-footer">
-              <p>Gracias por su pago</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
-
-    const ventanaImpresion = window.open("", "_blank");
-    ventanaImpresion.document.write(facturaHTML);
-    ventanaImpresion.document.close();
-    ventanaImpresion.focus();
-    ventanaImpresion.print();
-    ventanaImpresion.close();
+  // Eliminar un pago
+  const eliminarPago = async (id) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/pagos/${id}`);
+      console.log("Pago eliminado:", id);
+      setPagos(pagos.filter((pago) => pago._id !== id));
+      setFilteredPagos(filteredPagos.filter((pago) => pago._id !== id));
+    } catch (error) {
+      console.error("Error al eliminar el pago:", error);
+    }
   };
 
+  // Determinar el estado del pago según las fechas
+  const determinarEstadoPago = (fechaPago, fechaExpiracion) => {
+    const hoy = new Date().setHours(0, 0, 0, 0); // Fecha actual sin hora
+    const fechaPagado = new Date(fechaPago).setHours(0, 0, 0, 0);
+    const fechaExpirado = new Date(fechaExpiracion).setHours(0, 0, 0, 0);
+
+    if (fechaPagado <= fechaExpirado) {
+      return "Pagado";
+    } else if (hoy > fechaExpirado) {
+      return "Vencido";
+    } else if (fechaExpirado - hoy <= 259200000) {
+      // 3 días en milisegundos
+      return "Próximo a vencer";
+    }
+    return "Activo";
+  };
+
+  // Manejar la búsqueda por usuario o membresía
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+
+    const filtered = pagos.filter(
+      (pago) =>
+        pago.usuario.nombre.toLowerCase().includes(term) ||
+        pago.membresia.toLowerCase().includes(term)
+    );
+
+    setFilteredPagos(filtered);
+  };
+
+  // Abrir modal para ver la factura
+  const verFactura = (pago) => {
+    setFacturaSeleccionada(pago);
+    setShowFacturaModal(true);
+  };
+
+  // Descargar los datos visibles en Excel
   const descargarExcel = () => {
-    const datos = pagos.map((pago) => ({
+    const datos = filteredPagos.map((pago) => ({
       Usuario: pago.usuario.nombre,
       Membresía: pago.membresia,
       Monto: pago.monto,
       Descuento: pago.descuento,
+      Estado: determinarEstadoPago(pago.fechaPago, pago.fechaExpiracion),
       FechaPago: new Date(pago.fechaPago).toLocaleDateString(),
       FechaExpiración: new Date(pago.fechaExpiracion).toLocaleDateString(),
       Descripción: pago.descripcion,
@@ -133,21 +125,6 @@ const Pagos = () => {
     const libro = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(libro, hoja, "Pagos");
     XLSX.writeFile(libro, "Pagos.xlsx");
-  };
-
-  const calcularEstadoPago = (fechaExpiracion) => {
-    const hoy = new Date();
-    const fechaExp = new Date(fechaExpiracion);
-
-    // Diferencia en días entre la fecha actual y la fecha de expiración
-    const diferenciaDias = (fechaExp - hoy) / (1000 * 60 * 60 * 24);
-
-    if (fechaExp < hoy) {
-      return "expirado"; // Si ya expiró
-    } else if (diferenciaDias <= 5) {
-      return "cercaDeExpirar"; // Dentro de los próximos 5 días
-    }
-    return "activo"; // Si aún falta más de 5 días para expirar
   };
 
   return (
@@ -176,6 +153,22 @@ const Pagos = () => {
         }}
         initialData={pagoSeleccionado}
       />
+
+      {/* Filtros */}
+      <Row className="mb-4">
+        <Col md={4}>
+          <Form.Group controlId="searchInput">
+            <Form.Control
+              type="text"
+              placeholder="Buscar por usuario o membresía"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Tabla */}
       <h2>Listado de Pagos</h2>
       <Table striped bordered hover>
         <thead>
@@ -185,22 +178,28 @@ const Pagos = () => {
             <th>Monto</th>
             <th>Fecha de Pago</th>
             <th>Fecha de Expiración</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {pagos.map((pago) => {
-            const estadoPago = calcularEstadoPago(pago.fechaExpiracion);
+          {filteredPagos.map((pago) => {
+            const estado = determinarEstadoPago(
+              pago.fechaPago,
+              pago.fechaExpiracion
+            );
             return (
               <tr
                 key={pago._id}
                 style={{
                   backgroundColor:
-                    estadoPago === "expirado"
-                      ? "#ffcccc"
-                      : estadoPago === "cercaDeExpirar"
-                      ? "#fff3cd"
-                      : "white",
+                    estado === "Pagado"
+                      ? "#d4edda" // Verde claro
+                      : estado === "Vencido"
+                      ? "#f8d7da" // Rojo claro
+                      : estado === "Próximo a vencer"
+                      ? "#fff3cd" // Amarillo claro
+                      : "white", // Blanco por defecto
                 }}
               >
                 <td>{pago.usuario.nombre}</td>
@@ -208,6 +207,7 @@ const Pagos = () => {
                 <td>${pago.monto}</td>
                 <td>{new Date(pago.fechaPago).toLocaleDateString()}</td>
                 <td>{new Date(pago.fechaExpiracion).toLocaleDateString()}</td>
+                <td>{estado}</td>
                 <td>
                   <Button
                     variant="warning"
@@ -220,11 +220,18 @@ const Pagos = () => {
                     Editar
                   </Button>{" "}
                   <Button
-                    variant="secondary"
+                    variant="danger"
                     size="sm"
-                    onClick={() => imprimirFactura(pago)}
+                    onClick={() => eliminarPago(pago._id)}
                   >
-                    Imprimir Factura
+                    Eliminar
+                  </Button>{" "}
+                  <Button
+                    variant="info"
+                    size="sm"
+                    onClick={() => verFactura(pago)}
+                  >
+                    Ver Factura
                   </Button>
                 </td>
               </tr>
@@ -232,6 +239,29 @@ const Pagos = () => {
           })}
         </tbody>
       </Table>
+
+      {/* Modal para Factura */}
+      <Modal
+        show={showFacturaModal}
+        onHide={() => setShowFacturaModal(false)}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Factura</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {facturaSeleccionada && <Factura pago={facturaSeleccionada} />}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowFacturaModal(false)}
+          >
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Button variant="success" onClick={descargarExcel}>
         Descargar Excel
       </Button>

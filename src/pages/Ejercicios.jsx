@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Container, Modal } from "react-bootstrap";
+import { Table, Button, Container, Modal, Form } from "react-bootstrap";
 import axios from "axios";
 import UpdateExerciseModal from "../components/UpdateExerciseModal";
 import AddExerciseModal from "../components/AddExerciseModal";
 
 const Ejercicios = () => {
   const [ejercicios, setEjercicios] = useState([]);
+  const [filteredEjercicios, setFilteredEjercicios] = useState([]); // Estado para ejercicios filtrados
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
   const [selectedEjercicio, setSelectedEjercicio] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false); // Controlar el modal de agregar
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // Función para convertir un enlace a formato embed
   const getEmbedUrl = (url) => {
@@ -28,15 +30,32 @@ const Ejercicios = () => {
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/ejercicios`)
-      .then((response) => setEjercicios(response.data))
+      .then((response) => {
+        setEjercicios(response.data);
+        setFilteredEjercicios(response.data); // Inicialmente los ejercicios filtrados son todos
+      })
       .catch((error) =>
         console.error("Error al obtener los ejercicios:", error)
       );
   }, []);
 
+  // Manejar la búsqueda
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase(); // Convertir a minúsculas
+    setSearchTerm(term);
+
+    const filtered = ejercicios.filter(
+      (ejercicio) =>
+        ejercicio.nombre.toLowerCase().includes(term) || // Filtrar por nombre
+        ejercicio.descripcion.toLowerCase().includes(term) // Filtrar por descripción
+    );
+
+    setFilteredEjercicios(filtered);
+  };
+
   // Mostrar el modal del video
   const handleShowVideo = (url) => {
-    setVideoUrl(getEmbedUrl(url)); // Convertir la URL al formato embed
+    setVideoUrl(getEmbedUrl(url));
     setShowVideoModal(true);
   };
 
@@ -49,10 +68,14 @@ const Ejercicios = () => {
   // Eliminar un ejercicio
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/api/ejercicios/${id}`)
+      .delete(`${import.meta.env.VITE_BACKEND_URL}/api/ejercicios/${id}`)
       .then(() => {
         alert("Ejercicio eliminado correctamente");
-        setEjercicios(ejercicios.filter((ejercicio) => ejercicio._id !== id));
+        const updatedEjercicios = ejercicios.filter(
+          (ejercicio) => ejercicio._id !== id
+        );
+        setEjercicios(updatedEjercicios);
+        setFilteredEjercicios(updatedEjercicios); // Actualizar también los ejercicios filtrados
       })
       .catch((error) =>
         console.error("Error al eliminar el ejercicio:", error)
@@ -67,16 +90,18 @@ const Ejercicios = () => {
 
   // Manejar la actualización del ejercicio
   const handleExerciseUpdated = (updatedEjercicio) => {
-    setEjercicios((prevEjercicios) =>
-      prevEjercicios.map((ejercicio) =>
-        ejercicio._id === updatedEjercicio._id ? updatedEjercicio : ejercicio
-      )
+    const updatedEjercicios = ejercicios.map((ejercicio) =>
+      ejercicio._id === updatedEjercicio._id ? updatedEjercicio : ejercicio
     );
+    setEjercicios(updatedEjercicios);
+    setFilteredEjercicios(updatedEjercicios); // Actualizar también los ejercicios filtrados
   };
 
   // Manejar la creación de un nuevo ejercicio
   const handleExerciseAdded = (newEjercicio) => {
-    setEjercicios([...ejercicios, newEjercicio]);
+    const updatedEjercicios = [...ejercicios, newEjercicio];
+    setEjercicios(updatedEjercicios);
+    setFilteredEjercicios(updatedEjercicios); // Actualizar también los ejercicios filtrados
   };
 
   return (
@@ -92,6 +117,16 @@ const Ejercicios = () => {
         Agregar Nuevo Ejercicio
       </Button>
 
+      {/* Input de búsqueda */}
+      <Form.Group className="mb-4" controlId="searchInput">
+        <Form.Control
+          type="text"
+          placeholder="Buscar ejercicio por nombre o descripción"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </Form.Group>
+
       {/* Tabla de ejercicios */}
       <Table striped bordered hover responsive>
         <thead>
@@ -105,7 +140,7 @@ const Ejercicios = () => {
           </tr>
         </thead>
         <tbody>
-          {ejercicios.map((ejercicio) => (
+          {filteredEjercicios.map((ejercicio) => (
             <tr key={ejercicio._id}>
               <td>{ejercicio.nombre}</td>
               <td>{ejercicio.descripcion}</td>
