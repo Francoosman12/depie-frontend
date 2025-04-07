@@ -6,23 +6,8 @@ import "../styles/Navbar.css";
 
 const NavigationBar = ({ showLogin, user, setUser }) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobile, setIsMobile] = useState(false); // Nuevo estado para detectar móviles
+  const [isExpanded, setIsExpanded] = useState(false); // Controlar el menú hamburguesa
   const navigate = useNavigate(); // Hook para redirección
-
-  const [isNavbarOpen, setNavbarOpen] = useState(false); // Estado para controlar el menú hamburguesa
-
-  // Detectar el tamaño del dispositivo
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Móviles y tablets: ancho menor a 768px
-    };
-
-    handleResize(); // Ejecutar al montar el componente
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   // Detectar el scroll y actualizar el estado
   useEffect(() => {
@@ -41,11 +26,12 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
     setUser(null); // Limpia el estado del usuario logueado
     localStorage.removeItem("user"); // Elimina del Local Storage
     navigate("/"); // Redirige al home
+    setIsExpanded(false); // Cerrar el menú hamburguesa
   };
 
-  // Manejar el cierre del menú hamburguesa
+  // Manejar el cierre del menú hamburguesa al hacer clic en un enlace
   const handleNavClick = () => {
-    setNavbarOpen(false); // Cerrar el menú hamburguesa
+    setIsExpanded(false);
   };
 
   return (
@@ -53,6 +39,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
       className={`navigation-bar ${isScrolled ? "scrolled" : ""}`}
       expand="sm"
       fixed="top"
+      expanded={isExpanded} // Controlar el estado del menú hamburguesa
     >
       <Container>
         <Navbar.Brand as={Link} to="/">
@@ -68,12 +55,17 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
         </Navbar.Brand>
         <Navbar.Toggle
           aria-controls="navbar-nav"
-          onClick={() => setNavbarOpen(!isNavbarOpen)}
-          className={`navbar-toggler ${isNavbarOpen ? "open" : ""}`}
+          onClick={() => setIsExpanded(!isExpanded)} // Alternar el menú
+          className={`navbar-toggler ${isExpanded ? "open" : ""}`}
         />
-        <Navbar.Collapse id="navbar-nav" className={isNavbarOpen ? "show" : ""}>
-          <Nav className="ms-auto" onClick={handleNavClick}>
-            <Nav.Link className="text-white nav-item-hover" as={Link} to="/">
+        <Navbar.Collapse id="navbar-nav">
+          <Nav className="ms-auto">
+            <Nav.Link
+              className="text-white nav-item-hover"
+              as={Link}
+              to="/"
+              onClick={handleNavClick}
+            >
               Inicio
             </Nav.Link>
             {user?.activo && user?.rol === "alumno" && (
@@ -82,6 +74,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                   className="text-white nav-item-hover"
                   as={Link}
                   to="/mi-perfil"
+                  onClick={handleNavClick}
                 >
                   Mi Perfil
                 </Nav.Link>
@@ -89,6 +82,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                   className="text-white nav-item-hover"
                   as={Link}
                   to="/ver-rutina"
+                  onClick={handleNavClick}
                 >
                   Mi Rutina
                 </Nav.Link>
@@ -100,6 +94,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                   className="text-white nav-item-hover"
                   as={Link}
                   to="/ejercicios"
+                  onClick={handleNavClick}
                 >
                   Ejercicios
                 </Nav.Link>
@@ -107,6 +102,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                   className="text-white nav-item-hover"
                   as={Link}
                   to="/usuarios"
+                  onClick={handleNavClick}
                 >
                   Usuarios
                 </Nav.Link>
@@ -114,6 +110,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                   className="text-white nav-item-hover"
                   as={Link}
                   to="/rutinas"
+                  onClick={handleNavClick}
                 >
                   Rutinas
                 </Nav.Link>
@@ -121,6 +118,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                   className="text-white nav-item-hover"
                   as={Link}
                   to="/fichas-alumnos"
+                  onClick={handleNavClick}
                 >
                   Fichas de Alumnos
                 </Nav.Link>
@@ -128,6 +126,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                   className="text-white nav-item-hover"
                   as={Link}
                   to="/pagos"
+                  onClick={handleNavClick}
                 >
                   Pagos
                 </Nav.Link>
@@ -136,7 +135,10 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
             {!user ? (
               <Button
                 variant="outline-light nav-item-hover"
-                onClick={showLogin}
+                onClick={() => {
+                  showLogin();
+                  setIsExpanded(false);
+                }}
                 className="ms-3"
               >
                 Login
