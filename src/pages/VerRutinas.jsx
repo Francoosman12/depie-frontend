@@ -63,6 +63,16 @@ const VerRutinas = ({ user }) => {
     setComentariosDiarios({ ...comentariosDiarios, [dia]: comentario });
   };
 
+  // Manejar el cambio del peso por serie
+  const handlePesoChange = (e, index) => {
+    const newPesoUtilizado = [...selectedEjercicio.peso_utilizado];
+    newPesoUtilizado[index] = e.target.value;
+    setSelectedEjercicio({
+      ...selectedEjercicio,
+      peso_utilizado: newPesoUtilizado,
+    });
+  };
+
   // Guardar el progreso del alumno (peso utilizado y comentarios)
   const handleSaveProgress = () => {
     if (!selectedRutina) return; // Asegurarse de que hay una rutina seleccionada
@@ -169,12 +179,10 @@ const VerRutinas = ({ user }) => {
         selectedEjercicio={selectedEjercicio}
         selectedRutinaId={selectedRutina ? selectedRutina._id : null} // Validación añadida
         getEmbedUrl={getEmbedUrl}
-        handleEjercicioChange={(nuevoValor) =>
-          setSelectedEjercicio({
-            ...selectedEjercicio,
-            peso_utilizado: nuevoValor,
-          })
+        handleEjercicioChange={(nuevoEjercicio) =>
+          setSelectedEjercicio({ ...selectedEjercicio, ...nuevoEjercicio })
         }
+        handlePesoChange={handlePesoChange} // Pasar la función como prop
       />
     </Container>
   );

@@ -1,5 +1,3 @@
-/* NavigationBar.css */
-
 /* Estilo base del navbar */
 .navigation-bar {
   background-color: black;
@@ -7,28 +5,16 @@
   opacity: 1;
 }
 
-/* Estilo cuando se hace scroll */
-.navigation-bar.scrolled {
-  background-color: rgba(0, 0, 0, 0.8); /* Fondo semitransparente */
-  opacity: 0.9;
+/* Hover moderno en nav-links */
+.navbar-nav .nav-link.nav-item-hover {
+  position: relative;
+  color: white !important; /* Mantener texto blanco por defecto */
+  transition: color 0.2s ease, transform 0.2s ease; /* Transición suave */
 }
 
-/* Estilos generales de nav-link */
-.navbar-nav .nav-link,
-.navbar-nav .dropdown-item {
-  color: white !important; /* Forzar color blanco */
+.navbar-nav .nav-link.nav-item-hover:hover {
+  color: #F4BE14 !important; /* Elegante color dorado */
+  padding: auto;
+  transform: scale(1.02); /* Ligeramente agranda el texto al hacer hover */
 }
 
-/* Hover en dropdown-item */
-.navbar-nav .dropdown-item:hover {
-  background-color: red; /* Ejemplo de color al pasar el mouse */
-  color: white;
-}
-
-/* Aumentar padding de nav-link en dispositivos pequeños */
-@media (max-width: 768px) { /* Móvil y tablets */
-  .navbar-nav .nav-link {
-    padding: 15px 10px; /* Ajusta los valores a lo que necesites */
-  }
-  
-}

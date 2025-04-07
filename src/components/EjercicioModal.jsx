@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
@@ -10,6 +10,20 @@ const EjercicioModal = ({
   getEmbedUrl,
   handleEjercicioChange,
 }) => {
+  // Estado para los pesos por serie
+  const [pesosPorSerie, setPesosPorSerie] = useState({
+    peso_serie_1: selectedEjercicio?.peso_serie_1 || 0,
+    peso_serie_2: selectedEjercicio?.peso_serie_2 || 0,
+    peso_serie_3: selectedEjercicio?.peso_serie_3 || 0,
+  });
+
+  const handlePesoChange = (serie, value) => {
+    setPesosPorSerie((prevState) => ({
+      ...prevState,
+      [serie]: Number(value), // Asegurarse de que el valor es un número
+    }));
+  };
+
   const handleGuardarPeso = () => {
     const ejercicioId = selectedEjercicio?.ejercicio_id?._id;
     if (!ejercicioId) {
@@ -17,20 +31,28 @@ const EjercicioModal = ({
       return;
     }
 
+    console.log("Datos enviados al backend:", {
+      ...pesosPorSerie,
+      terminado: selectedEjercicio.terminado,
+    });
+
     axios
       .put(
         `${
           import.meta.env.VITE_BACKEND_URL
         }/api/rutinas/${selectedRutinaId}/ejercicio/${ejercicioId}`,
-        { peso_utilizado: selectedEjercicio.peso_utilizado }
+        {
+          ...pesosPorSerie,
+          terminado: selectedEjercicio.terminado, // Guardar estado terminado
+        }
       )
       .then(() => {
-        alert("Peso utilizado guardado exitosamente");
+        alert("Datos guardados exitosamente");
         setShowModal(false);
       })
       .catch((error) => {
-        console.error("Error al guardar el peso utilizado:", error);
-        alert("Hubo un error al guardar el peso utilizado");
+        console.error("Error al guardar los datos:", error);
+        alert("Hubo un error al guardar los datos");
       });
   };
 
@@ -50,16 +72,54 @@ const EjercicioModal = ({
               <strong>Peso sugerido:</strong>{" "}
               {selectedEjercicio.peso_sugerido || "No especificado"}
             </p>
-            <Form.Group className="pb-4" controlId="pesoUtilizado">
-              <Form.Label>Peso utilizado:</Form.Label>
-              <p>(Introducir el peso por serie de esta manera: 8-10-12)</p>
+
+            {/* Inputs separados para registrar peso por serie */}
+            <Form.Group className="mb-3">
+              <Form.Label>Peso utilizado - Serie 1:</Form.Label>
               <Form.Control
                 type="number"
-                value={selectedEjercicio.peso_utilizado || ""}
-                placeholder="Introduce el peso utilizado 8-10-12"
-                onChange={(e) => handleEjercicioChange(e.target.value)}
+                value={pesosPorSerie.peso_serie_1}
+                onChange={(e) =>
+                  handlePesoChange("peso_serie_1", e.target.value)
+                }
               />
             </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Peso utilizado - Serie 2:</Form.Label>
+              <Form.Control
+                type="number"
+                value={pesosPorSerie.peso_serie_2}
+                onChange={(e) =>
+                  handlePesoChange("peso_serie_2", e.target.value)
+                }
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Peso utilizado - Serie 3:</Form.Label>
+              <Form.Control
+                type="number"
+                value={pesosPorSerie.peso_serie_3}
+                onChange={(e) =>
+                  handlePesoChange("peso_serie_3", e.target.value)
+                }
+              />
+            </Form.Group>
+
+            {/* Checkbox para marcar como terminado */}
+            <Form.Check
+              type="checkbox"
+              label="Ejercicio Terminado"
+              checked={selectedEjercicio.terminado}
+              onChange={(e) =>
+                handleEjercicioChange({
+                  ...selectedEjercicio,
+                  terminado: e.target.checked,
+                })
+              }
+              className="mb-3"
+            />
+
+            {/* Video del ejercicio */}
             {selectedEjercicio?.ejercicio_id?.video_url && (
               <div className="ratio ratio-16x9">
                 <iframe
@@ -76,7 +136,7 @@ const EjercicioModal = ({
       </Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={handleGuardarPeso}>
-          Guardar Peso Utilizado
+          Guardar Datos
         </Button>
         <Button variant="secondary" onClick={() => setShowModal(false)}>
           Cerrar
