@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import axios from "axios";
+import "../styles/Registro.css";
 
 const Registro = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const Registro = () => {
     fechaNacimiento: "",
     genero: "Masculino",
     pesoActual: "",
+    telefono: "",
     altura: "", // Nuevo: Altura en cm
     objetivos: "",
     nivelExperiencia: "Principiante",
@@ -58,6 +60,7 @@ const Registro = () => {
         fechaNacimiento: "",
         genero: "Masculino",
         pesoActual: "",
+        telefono: "",
         altura: "", // Reiniciar altura
         objetivos: "",
         nivelExperiencia: "Principiante",
@@ -73,18 +76,22 @@ const Registro = () => {
   };
 
   return (
-    <Container className="vh-100 d-flex align-items-center justify-content-center pb-5 pt-5 mt-5">
+    <Container
+      fluid
+      className="vh-90 d-flex align-items-center justify-content-center px-3 mt-5 pt-5 pb-5"
+    >
       <div style={{ maxWidth: "600px", width: "100%" }}>
-        <h1 className="text-center mb-4 pb-5 pt-5 mt-5">Registro de Usuario</h1>
+        <h1 className="text-center mb-4">Registro de Usuario</h1>
         {error && <Alert variant="danger">{error}</Alert>}
         {success && (
           <Alert variant="success">Usuario registrado con éxito</Alert>
         )}
         <Form onSubmit={handleSubmit}>
+          {/* Nombre y Email */}
           <Row className="mb-3">
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group controlId="formNombre">
-                <Form.Label>Nombre</Form.Label>
+                <Form.Label>Nombre y Apellido</Form.Label>
                 <Form.Control
                   type="text"
                   name="nombre"
@@ -94,7 +101,7 @@ const Registro = () => {
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group controlId="formEmail">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
@@ -107,8 +114,9 @@ const Registro = () => {
               </Form.Group>
             </Col>
           </Row>
+          {/* Contraseña y Confirmar Contraseña */}
           <Row className="mb-3">
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group controlId="formPassword">
                 <Form.Label>Contraseña</Form.Label>
                 <Form.Control
@@ -120,7 +128,7 @@ const Registro = () => {
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group controlId="formConfirmPassword">
                 <Form.Label>Confirmar Contraseña</Form.Label>
                 <Form.Control
@@ -133,8 +141,9 @@ const Registro = () => {
               </Form.Group>
             </Col>
           </Row>
+          {/* Fecha de Nacimiento y Género */}
           <Row className="mb-3">
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group controlId="formFechaNacimiento">
                 <Form.Label>Fecha de Nacimiento</Form.Label>
                 <Form.Control
@@ -145,7 +154,7 @@ const Registro = () => {
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group controlId="formGenero">
                 <Form.Label>Género</Form.Label>
                 <Form.Select
@@ -160,8 +169,9 @@ const Registro = () => {
               </Form.Group>
             </Col>
           </Row>
+          {/* Peso Actual y Altura */}
           <Row className="mb-3">
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group controlId="formPesoActual">
                 <Form.Label>Peso Actual (kg)</Form.Label>
                 <Form.Control
@@ -172,7 +182,7 @@ const Registro = () => {
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group controlId="formAltura">
                 <Form.Label>Altura (cm)</Form.Label>
                 <Form.Control
@@ -185,7 +195,21 @@ const Registro = () => {
             </Col>
           </Row>
           <Row className="mb-3">
-            <Col md={12}>
+            <Col xs={12} md={6}>
+              <Form.Group controlId="formTelefono">
+                <Form.Label>Telefono</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          {/* Objetivos */}
+          <Row className="mb-3">
+            <Col xs={12}>
               <Form.Group controlId="formObjetivos">
                 <Form.Label>Objetivos</Form.Label>
                 <Form.Control
@@ -198,8 +222,9 @@ const Registro = () => {
               </Form.Group>
             </Col>
           </Row>
+          {/* Condiciones Médicas */}
           <Row className="mb-3">
-            <Col md={12}>
+            <Col xs={12}>
               <Form.Group controlId="formCondicionesMedicas">
                 <Form.Label>Condiciones Médicas</Form.Label>
                 <Form.Control
@@ -213,8 +238,9 @@ const Registro = () => {
               </Form.Group>
             </Col>
           </Row>
+          {/* Nivel de Experiencia */}
           <Row className="mb-3">
-            <Col md={6}>
+            <Col xs={12}>
               <Form.Group controlId="formNivelExperiencia">
                 <Form.Label>Nivel de Experiencia</Form.Label>
                 <Form.Select
@@ -229,6 +255,7 @@ const Registro = () => {
               </Form.Group>
             </Col>
           </Row>
+          {/* Botón de Enviar */}
           <Button variant="primary" type="submit" className="w-100">
             Registrar Usuario
           </Button>

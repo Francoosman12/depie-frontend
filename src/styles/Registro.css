@@ -1,0 +1,62 @@
+/* Contenedor principal para que se ajuste al alto total */
+.registro {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px; /* Espaciado horizontal pequeño */
+    box-sizing: border-box; /* Incluye padding en el cálculo del ancho */
+  }
+  
+  /* Caja principal del formulario */
+  .registro-form {
+    max-width: 600px;
+    width: 100%;
+    background-color: #fff; /* Fondo blanco */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombras suaves */
+    padding: 20px;
+  }
+  
+  /* Título del formulario */
+  .registro-form h1 {
+    font-size: 1.4rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Ajustes para inputs y selects */
+  .form-control,
+  .form-select {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Regla específica para móviles pequeños */
+  @media (max-width: 400px) {
+    .registro-form {
+      padding: 10px; /* Reduce el padding interno */
+    }
+  
+    .registro-form h1 {
+      font-size: 1.2rem; /* Reduce el tamaño del título */
+    }
+  
+    .form-group {
+      margin-bottom: 10px; /* Reduce el espacio entre los campos */
+    }
+  
+    .form-control,
+    .form-select {
+      font-size: 0.85rem; /* Ajusta el tamaño de fuente */
+      padding: 8px; /* Reduce el padding interno */
+    }
+  }
+  
+  /* Ajustes para tabletas */
+  @media (max-width: 768px) {
+    .registro-form h1 {
+      font-size: 1.3rem; /* Tamaño moderado del título */
+    }
+  }

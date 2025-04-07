@@ -6,12 +6,26 @@ import "../styles/Navbar.css";
 
 const NavigationBar = ({ showLogin, user, setUser }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobile, setIsMobile] = useState(false); // Nuevo estado para detectar móviles
   const navigate = useNavigate(); // Hook para redirección
+
+  // Detectar el tamaño del dispositivo
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Móviles y tablets: ancho menor a 768px
+    };
+
+    handleResize(); // Ejecutar al montar el componente
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // Detectar el scroll y actualizar el estado
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 50); // Cambia el estado si hay scroll
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -31,7 +45,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
     <Navbar
       className={`navigation-bar ${isScrolled ? "scrolled" : ""}`}
       expand="sm"
-      fixed="top"
+      fixed={isMobile ? undefined : "top"} // Navbar fija solo en pantallas grandes
     >
       <Container>
         <Navbar.Brand as={Link} to="/">
