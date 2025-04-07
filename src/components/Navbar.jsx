@@ -9,6 +9,8 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
   const [isMobile, setIsMobile] = useState(false); // Nuevo estado para detectar móviles
   const navigate = useNavigate(); // Hook para redirección
 
+  const [isNavbarOpen, setNavbarOpen] = useState(false); // Estado para controlar el menú hamburguesa
+
   // Detectar el tamaño del dispositivo
   useEffect(() => {
     const handleResize = () => {
@@ -41,11 +43,16 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
     navigate("/"); // Redirige al home
   };
 
+  // Manejar el cierre del menú hamburguesa
+  const handleNavClick = () => {
+    setNavbarOpen(false); // Cerrar el menú hamburguesa
+  };
+
   return (
     <Navbar
       className={`navigation-bar ${isScrolled ? "scrolled" : ""}`}
       expand="sm"
-      fixed={isMobile ? undefined : "top"} // Navbar fija solo en pantallas grandes
+      fixed="top"
     >
       <Container>
         <Navbar.Brand as={Link} to="/">
@@ -59,58 +66,84 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
             }}
           />
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="navbar-nav" />
-        <Navbar.Collapse id="navbar-nav">
-          <Nav className="ms-auto">
-            <Nav.Link className="text-white" as={Link} to="/">
+        <Navbar.Toggle
+          aria-controls="navbar-nav"
+          onClick={() => setNavbarOpen(!isNavbarOpen)}
+          className={`navbar-toggler ${isNavbarOpen ? "open" : ""}`}
+        />
+        <Navbar.Collapse id="navbar-nav" className={isNavbarOpen ? "show" : ""}>
+          <Nav className="ms-auto" onClick={handleNavClick}>
+            <Nav.Link className="text-white nav-item-hover" as={Link} to="/">
               Inicio
             </Nav.Link>
-
-            {/* Bloquear navegación si el usuario está inactivo */}
             {user?.activo && user?.rol === "alumno" && (
               <>
-                <Nav.Link className="text-white" as={Link} to="/mi-perfil">
+                <Nav.Link
+                  className="text-white nav-item-hover"
+                  as={Link}
+                  to="/mi-perfil"
+                >
                   Mi Perfil
                 </Nav.Link>
-                <Nav.Link className="text-white" as={Link} to="/ver-rutina">
+                <Nav.Link
+                  className="text-white nav-item-hover"
+                  as={Link}
+                  to="/ver-rutina"
+                >
                   Mi Rutina
                 </Nav.Link>
               </>
             )}
-
             {user?.activo && user?.rol === "profesor" && (
               <>
-                <Nav.Link className="text-white" as={Link} to="/ejercicios">
+                <Nav.Link
+                  className="text-white nav-item-hover"
+                  as={Link}
+                  to="/ejercicios"
+                >
                   Ejercicios
                 </Nav.Link>
-                <Nav.Link className="text-white" as={Link} to="/usuarios">
+                <Nav.Link
+                  className="text-white nav-item-hover"
+                  as={Link}
+                  to="/usuarios"
+                >
                   Usuarios
                 </Nav.Link>
-                <Nav.Link className="text-white" as={Link} to="/rutinas">
+                <Nav.Link
+                  className="text-white nav-item-hover"
+                  as={Link}
+                  to="/rutinas"
+                >
                   Rutinas
                 </Nav.Link>
-                <Nav.Link className="text-white" as={Link} to="/fichas-alumnos">
+                <Nav.Link
+                  className="text-white nav-item-hover"
+                  as={Link}
+                  to="/fichas-alumnos"
+                >
                   Fichas de Alumnos
                 </Nav.Link>
-                <Nav.Link className="text-white" as={Link} to="/pagos">
+                <Nav.Link
+                  className="text-white nav-item-hover"
+                  as={Link}
+                  to="/pagos"
+                >
                   Pagos
                 </Nav.Link>
               </>
             )}
-
-            {/* Mostrar botón de login si no hay usuario */}
             {!user ? (
               <Button
-                variant="outline-light"
+                variant="outline-light nav-item-hover"
                 onClick={showLogin}
                 className="ms-3"
               >
                 Login
               </Button>
             ) : (
-              /* Botón de cerrar sesión si hay un usuario */
               <Button
-                variant="outline-danger"
+                variant="outline-danger nav-item-hover"
                 onClick={handleLogout}
                 className="ms-3"
               >
