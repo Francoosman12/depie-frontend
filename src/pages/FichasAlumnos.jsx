@@ -97,10 +97,11 @@ const FichasAlumnos = () => {
 
       {/* Mostrar la tabla con los datos de los alumnos */}
       {!loading && filteredAlumnos.length > 0 && (
-        <Table striped bordered hover>
+        <Table striped bordered hover responsive>
           <thead>
             <tr>
               <th>#</th>
+              <th>Foto</th>
               <th>Nombre</th>
               <th>Email</th>
               <th>Teléfono</th>
@@ -111,6 +112,18 @@ const FichasAlumnos = () => {
             {filteredAlumnos.map((alumno, index) => (
               <tr key={alumno._id}>
                 <td>{index + 1}</td>
+                <td className="text-center">
+                  <img
+                    src={alumno.fotoPerfil || "https://via.placeholder.com/50"}
+                    alt="Foto de Perfil"
+                    className="rounded-circle"
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </td>
                 <td>{alumno.nombre}</td>
                 <td>{alumno.email}</td>
                 <td>{alumno.telefono || "No proporcionado"}</td>
@@ -126,13 +139,22 @@ const FichasAlumnos = () => {
       )}
 
       {/* Modal para mostrar la ficha del alumno */}
-      <Modal show={modalVisible} onHide={cerrarModal}>
+      <Modal show={modalVisible} onHide={cerrarModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Ficha de {alumnoSeleccionado?.nombre}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {alumnoSeleccionado && (
-            <div>
+            <div className="text-center">
+              <img
+                src={
+                  alumnoSeleccionado.fotoPerfil ||
+                  "https://via.placeholder.com/150"
+                }
+                alt="Foto de Perfil"
+                className="rounded-circle mb-3"
+                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+              />
               <p>
                 <strong>Email:</strong> {alumnoSeleccionado.email}
               </p>
