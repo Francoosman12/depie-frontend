@@ -44,10 +44,25 @@ const Registro = () => {
     }
 
     try {
+      // Crear un objeto FormData para manejar archivos
+      const data = new FormData();
+      for (const key in formData) {
+        if (formData.hasOwnProperty(key)) {
+          data.append(key, formData[key]);
+        }
+      }
+
+      // Realizar la solicitud al backend
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/usuarios`,
-        formData
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
+
       setSuccess(true);
       setError("");
       alert("Usuario registrado exitosamente");
@@ -61,13 +76,14 @@ const Registro = () => {
         genero: "Masculino",
         pesoActual: "",
         telefono: "",
-        altura: "", // Reiniciar altura
+        altura: "",
         objetivos: "",
         nivelExperiencia: "Principiante",
-        condicionesMedicas: "", // Reiniciar condiciones médicas
+        condicionesMedicas: "",
         rol: "alumno",
         metodoRegistro: "email",
         activo: true,
+        fotoPerfil: null, // Reinicia el campo de foto
       });
     } catch (error) {
       console.error("Error al registrar usuario:", error);
@@ -252,6 +268,23 @@ const Registro = () => {
                   <option value="Intermedio">Intermedio</option>
                   <option value="Avanzado">Avanzado</option>
                 </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
+          {/* Foto de Perfil */}
+          <Row className="mb-3">
+            <Col xs={12}>
+              <Form.Group controlId="formFotoPerfil">
+                <Form.Label>Foto de Perfil</Form.Label>
+                <Form.Control
+                  type="file"
+                  name="fotoPerfil"
+                  onChange={(e) =>
+                    setFormData({ ...formData, fotoPerfil: e.target.files[0] })
+                  }
+                  accept="image/*" // Asegura que solo se puedan seleccionar imágenes
+                  required
+                />
               </Form.Group>
             </Col>
           </Row>
