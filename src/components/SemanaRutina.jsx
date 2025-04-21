@@ -9,6 +9,7 @@ const SemanaRutina = ({
   handleComentarioProfesorChange,
   handleRemoveEjercicio,
   handleAddEjercicio,
+  handleRepetirEjercicios, // Nueva función para repetir ejercicios
 }) => {
   const [activeSemana, setActiveSemana] = useState(0); // Semana activa (por índice)
 
@@ -42,6 +43,18 @@ const SemanaRutina = ({
       {semanas.length > 0 && (
         <div>
           <h4 className="mt-4">Semana {semanas[activeSemana].numeroSemana}</h4>
+          {activeSemana > 0 && (
+            <Button
+              variant="outline-secondary"
+              className="mb-3"
+              onClick={() =>
+                handleRepetirEjercicios(semanas[activeSemana].numeroSemana)
+              }
+            >
+              Repetir ejercicios de Semana{" "}
+              {semanas[activeSemana].numeroSemana - 1}
+            </Button>
+          )}
           {semanas[activeSemana].dias.map((dia) => (
             <div key={dia.dia} className="mb-3">
               <h5>{dia.dia}</h5>
@@ -52,8 +65,7 @@ const SemanaRutina = ({
                     <th>Bloque</th>
                     <th>Series</th>
                     <th>Repeticiones</th>
-                    <th>RIP</th>
-
+                    <th>Peso Sugerido</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -133,7 +145,6 @@ const SemanaRutina = ({
                           className="form-control-sm"
                         />
                       </td>
-
                       <td>
                         <Button
                           variant="danger"
