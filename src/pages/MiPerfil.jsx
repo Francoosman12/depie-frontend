@@ -57,37 +57,39 @@ const MiPerfil = ({ user }) => {
   };
 
   const handleSaveChanges = () => {
-    const data = {};
+    const data = new FormData();
 
-    // Agregar solo los campos que han cambiado
+    // Agregar todos los datos modificados al FormData
     for (const key in updatedPerfil) {
       if (updatedPerfil[key] !== perfil[key]) {
-        data[key] = updatedPerfil[key];
+        data.append(key, updatedPerfil[key]);
       }
     }
 
-    console.log("Datos que se enviarán:", data);
+    // Depurar el contenido del FormData
+    for (let pair of data.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
 
-    setLoading(true);
+    // Enviar la solicitud al backend
     axios
       .put(
         `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/${user._id}`,
         data,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       )
       .then((response) => {
-        setPerfil(response.data); // Actualizar el estado del perfil con los datos recibidos
-        setShowEditModal(false); // Cerrar el modal
-        setLoading(false);
+        console.log("Perfil actualizado:", response.data);
+        setPerfil(response.data); // Actualizar el perfil en el estado
+        setShowEditModal(false); // Cerrar modal
       })
-      .catch((err) => {
-        console.error("Error al actualizar el perfil:", err);
+      .catch((error) => {
+        console.error("Error al actualizar el perfil:", error);
         setError("Hubo un error al guardar los cambios. Inténtalo nuevamente.");
-        setLoading(false);
       });
   };
 

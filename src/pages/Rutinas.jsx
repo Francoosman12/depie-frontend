@@ -188,6 +188,36 @@ const Rutinas = () => {
     setSemanas(updatedSemanas);
   };
 
+  const handleRepetirEjercicios = (numeroSemana) => {
+    const semanaAnterior = semanas.find(
+      (semana) => semana.numeroSemana === numeroSemana - 1
+    );
+
+    if (!semanaAnterior) {
+      alert(`No se encontraron ejercicios en la semana ${numeroSemana - 1}`);
+      return;
+    }
+
+    const updatedSemanas = semanas.map((semana) =>
+      semana.numeroSemana === numeroSemana
+        ? {
+            ...semana,
+            dias: semana.dias.map((dia, index) => ({
+              ...dia,
+              ejercicios: [...semanaAnterior.dias[index].ejercicios], // Copiar los ejercicios del mismo día
+            })),
+          }
+        : semana
+    );
+
+    setSemanas(updatedSemanas);
+    alert(
+      `Ejercicios de la Semana ${
+        numeroSemana - 1
+      } se copiaron a la Semana ${numeroSemana}`
+    );
+  };
+
   return (
     <Container className="pb-5 pt-5 mt-5">
       <h1 className="my-4 text-center">Crear Rutina</h1>
@@ -277,6 +307,7 @@ const Rutinas = () => {
           }
           handleRemoveEjercicio={handleRemoveEjercicio}
           handleAddEjercicio={handleAddEjercicio}
+          handleRepetirEjercicios={handleRepetirEjercicios} // Asegúrate de pasar esta función
         />
         <Button variant="primary" type="submit">
           Guardar Rutina

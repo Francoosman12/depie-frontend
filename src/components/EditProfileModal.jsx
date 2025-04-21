@@ -62,7 +62,6 @@ const EditProfileModal = ({
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Nivel de Experiencia</Form.Label>
-            {/* Menu desplegable (Select) */}
             <Form.Select
               name="nivelExperiencia"
               value={updatedPerfil.nivelExperiencia || ""}
@@ -89,6 +88,35 @@ const EditProfileModal = ({
               type="text"
               name="condicionesMedicas"
               value={updatedPerfil.condicionesMedicas || ""}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+
+          {/* Nuevo: Vista previa y carga de foto de perfil */}
+          <Form.Group className="mb-3">
+            <Form.Label>Foto de Perfil</Form.Label>
+            {updatedPerfil.fotoPerfil && (
+              <div className="mb-3 text-center">
+                <img
+                  src={
+                    typeof updatedPerfil.fotoPerfil === "string"
+                      ? updatedPerfil.fotoPerfil
+                      : URL.createObjectURL(updatedPerfil.fotoPerfil)
+                  }
+                  alt="Vista previa"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+            )}
+            <Form.Control
+              type="file"
+              name="fotoPerfil"
+              accept="image/*"
               onChange={handleInputChange}
             />
           </Form.Group>
