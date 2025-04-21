@@ -18,3 +18,24 @@
   transform: scale(1.02); /* Ligeramente agranda el texto al hacer hover */
 }
 
+.nav-item-hover {
+  color: white !important; /* Asegura que el texto siempre sea blanco */
+}
+
+.navbar-nav .nav-link {
+  color: white !important; /* Asegura que los enlaces sean blancos */
+}
+
+.navbar-nav .dropdown-menu {
+  background-color: rgba(0, 0, 0, 0.9); /* Fondo oscuro para el dropdown */
+  border: none; /* Quitar el borde del dropdown */
+}
+
+.navbar-nav .dropdown-item {
+  color: white !important; /* Texto blanco dentro del dropdown */
+}
+
+.navbar-nav .dropdown-item:hover {
+  background-color: #1a1a1a; /* Cambiar el color de fondo en hover */
+  color: #f8f9fa; /* Cambiar el color del texto en hover */
+}

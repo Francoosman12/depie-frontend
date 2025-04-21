@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Container, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/depie.png";
 import "../styles/Navbar.css";
@@ -60,6 +60,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
         />
         <Navbar.Collapse id="navbar-nav">
           <Nav className="ms-auto">
+            {/* Enlace al Inicio */}
             <Nav.Link
               className="text-white nav-item-hover"
               as={Link}
@@ -68,6 +69,7 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
             >
               Inicio
             </Nav.Link>
+
             {user?.activo && user?.rol === "alumno" && (
               <>
                 <Nav.Link
@@ -88,48 +90,66 @@ const NavigationBar = ({ showLogin, user, setUser }) => {
                 </Nav.Link>
               </>
             )}
+
             {user?.activo && user?.rol === "profesor" && (
               <>
-                <Nav.Link
+                {/* Desplegable Rutinas */}
+                <NavDropdown
+                  title="Rutinas"
+                  id="nav-dropdown-rutinas"
                   className="text-white nav-item-hover"
-                  as={Link}
-                  to="/ejercicios"
-                  onClick={handleNavClick}
                 >
-                  Ejercicios
-                </Nav.Link>
-                <Nav.Link
+                  <NavDropdown.Item
+                    as={Link}
+                    to="/ejercicios"
+                    onClick={handleNavClick}
+                  >
+                    Ejercicios
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    to="/rutinas"
+                    onClick={handleNavClick}
+                  >
+                    Crear Rutinas
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    to="/rutinas-creadas"
+                    onClick={handleNavClick}
+                  >
+                    Ver Rutinas Creadas
+                  </NavDropdown.Item>
+                </NavDropdown>
+
+                {/* Desplegable Usuarios */}
+                <NavDropdown
+                  title="Usuarios"
+                  id="nav-dropdown-usuarios"
                   className="text-white nav-item-hover"
-                  as={Link}
-                  to="/usuarios"
-                  onClick={handleNavClick}
                 >
-                  Usuarios
-                </Nav.Link>
-                <Nav.Link
-                  className="text-white nav-item-hover"
-                  as={Link}
-                  to="/rutinas"
-                  onClick={handleNavClick}
-                >
-                  Rutinas
-                </Nav.Link>
-                <Nav.Link
-                  className="text-white nav-item-hover"
-                  as={Link}
-                  to="/fichas-alumnos"
-                  onClick={handleNavClick}
-                >
-                  Fichas de Alumnos
-                </Nav.Link>
-                <Nav.Link
-                  className="text-white nav-item-hover"
-                  as={Link}
-                  to="/pagos"
-                  onClick={handleNavClick}
-                >
-                  Pagos
-                </Nav.Link>
+                  <NavDropdown.Item
+                    as={Link}
+                    to="/usuarios"
+                    onClick={handleNavClick}
+                  >
+                    Ver Usuarios
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    to="/fichas-alumnos"
+                    onClick={handleNavClick}
+                  >
+                    Fichas de Alumnos
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    to="/pagos"
+                    onClick={handleNavClick}
+                  >
+                    Pagos
+                  </NavDropdown.Item>
+                </NavDropdown>
               </>
             )}
             {!user ? (
