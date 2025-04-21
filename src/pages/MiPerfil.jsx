@@ -83,7 +83,6 @@ const MiPerfil = ({ user }) => {
         }
       )
       .then((response) => {
-        console.log("Perfil actualizado:", response.data);
         setPerfil(response.data); // Actualizar el perfil en el estado
         setShowEditModal(false); // Cerrar modal
       })
