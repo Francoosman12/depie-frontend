@@ -87,7 +87,6 @@ const MiPerfil = ({ user }) => {
         setShowEditModal(false); // Cerrar modal
       })
       .catch((error) => {
-        console.error("Error al actualizar el perfil:", error);
         setError("Hubo un error al guardar los cambios. Inténtalo nuevamente.");
       });
   };
