@@ -18,7 +18,7 @@
   transform: scale(1.02); /* Ligeramente agranda el texto al hacer hover */
 }
 
-.nav-item-hover {
+.nav-item-hover{
   color: white !important; /* Asegura que el texto siempre sea blanco */
 }
 

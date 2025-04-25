@@ -19,6 +19,16 @@ const RutinasCreadas = () => {
   const [loading, setLoading] = useState(false);
   const [modalShow, setModalShow] = useState(false); // Controlar el modal
   const [selectedRutina, setSelectedRutina] = useState(null); // Rutina seleccionada
+  const [ejerciciosDisponibles, setEjerciciosDisponibles] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/ejercicios`)
+      .then((response) => {
+        setEjerciciosDisponibles(response.data); // Guardar todos los ejercicios disponibles
+      })
+      .catch((error) => console.error("Error al obtener ejercicios:", error));
+  }, []);
 
   // Obtener rutinas desde el backend
   useEffect(() => {
@@ -68,20 +78,42 @@ const RutinasCreadas = () => {
 
   // Manejar los cambios dentro de SemanaRutina
   const handleUpdate = async () => {
+    const updatedRutina = { ...selectedRutina };
+
+    updatedRutina.semanas.forEach((semana) => {
+      semana.dias.forEach((dia) => {
+        dia.ejercicios.forEach((ejercicio) => {
+          if (!ejercicio.ejercicio_id) {
+            console.warn(
+              `⚠️ El ejercicio "${ejercicio.nombre}" no tiene un ejercicio_id. Se está corrigiendo.`
+            );
+            const ejercicioExistente = ejerciciosDisponibles.find(
+              (e) => e.nombre === ejercicio.nombre
+            );
+            if (ejercicioExistente) {
+              ejercicio.ejercicio_id = ejercicioExistente._id; // ✅ Reasignar ejercicio_id si se encuentra
+            }
+          }
+        });
+      });
+    });
+
+    console.log("Rutina corregida antes de actualizar:", updatedRutina);
+
     try {
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/rutinas/${selectedRutina._id}`,
-        selectedRutina
+        `${import.meta.env.VITE_BACKEND_URL}/api/rutinas/${updatedRutina._id}`,
+        updatedRutina
       );
       alert("Rutina actualizada exitosamente.");
       setRutinas((prev) =>
         prev.map((rutina) =>
-          rutina._id === selectedRutina._id ? selectedRutina : rutina
+          rutina._id === updatedRutina._id ? updatedRutina : rutina
         )
       );
       setFilteredRutinas((prev) =>
         prev.map((rutina) =>
-          rutina._id === selectedRutina._id ? selectedRutina : rutina
+          rutina._id === updatedRutina._id ? updatedRutina : rutina
         )
       );
       handleModalClose();
@@ -187,7 +219,7 @@ const RutinasCreadas = () => {
           {selectedRutina && (
             <SemanaRutina
               semanas={selectedRutina.semanas}
-              ejercicios={[]} // Debes pasar los ejercicios disponibles aquí
+              ejercicios={ejerciciosDisponibles} // ✅ Pasar todos los ejercicios disponibles
               comentarioProfesor={selectedRutina.comentario}
               handleInputChange={(semana, dia, index, campo, valor) => {
                 const updatedRutina = { ...selectedRutina };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
+import getEmbedUrl from "../utils/getEmbedUrl"; // ✅ Asegurar que la función se importa correctamente
 
 const AddExerciseModal = ({ show, onHide, onAdd }) => {
   const [formData, setFormData] = useState({
@@ -20,19 +21,32 @@ const AddExerciseModal = ({ show, onHide, onAdd }) => {
   // Enviar el formulario para agregar un nuevo ejercicio
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    console.log("URL del video antes de guardar:", formData.video_url); // ✅ Verificar si existe antes de enviar
+
+    // ❌ NO transformar a embed aquí, solo guardar la URL original
+    const transformedData = {
+      ...formData,
+      video_url: formData.video_url, // ✅ Guardar la URL sin cambios
+    };
+
     axios
-      .post(`${import.meta.env.VITE_BACKEND_URL}/api/ejercicios`, formData)
+      .post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/ejercicios`,
+        transformedData
+      )
       .then((response) => {
+        console.log("Ejercicio guardado en la BD:", response.data); // ✅ Confirmar que `video_url` se guardó correctamente
         alert("Ejercicio agregado exitosamente");
-        onAdd(response.data); // Notificar al padre que un ejercicio fue agregado
-        onHide(); // Cerrar el modal
+        onAdd(response.data);
+        onHide();
         setFormData({
           nombre: "",
           descripcion: "",
           dificultad: "Principiante",
           tipo: "Fuerza",
           video_url: "",
-        }); // Limpiar el formulario
+        });
       })
       .catch((error) => {
         console.error("Error al agregar el ejercicio:", error);

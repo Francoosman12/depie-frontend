@@ -1,36 +1,16 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Card,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Nav,
-  Form,
-} from "react-bootstrap";
+import { Container, Form, Nav, Button } from "react-bootstrap";
 import axios from "axios";
 import EjercicioModal from "../components/EjercicioModal";
 import DiaRutina from "../components/DiaRutina";
-
-// Función para convertir un enlace a formato embed
-const getEmbedUrl = (url) => {
-  if (url.includes("youtu.be")) {
-    const videoId = url.split("/").pop().split("?")[0];
-    return `https://www.youtube.com/embed/${videoId}`;
-  } else if (url.includes("watch?v=")) {
-    const videoId = url.split("v=")[1].split("&")[0];
-    return `https://www.youtube.com/embed/${videoId}`;
-  }
-  return url; // Devuelve la URL original si no requiere conversión
-};
+import getEmbedUrl from "../utils/getEmbedUrl";
 
 const VerRutinas = ({ user }) => {
   const [rutinas, setRutinas] = useState([]); // Todas las rutinas disponibles
   const [selectedRutina, setSelectedRutina] = useState(null); // Rutina seleccionada
   const [selectedEjercicio, setSelectedEjercicio] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [activeSemana, setActiveSemana] = useState(0);
+  const [activeSemana, setActiveSemana] = useState(0); // Estado para manejar la semana activa
   const [comentariosDiarios, setComentariosDiarios] = useState({}); // Comentarios diarios del alumno
 
   // Obtener todas las rutinas del usuario
@@ -44,17 +24,42 @@ const VerRutinas = ({ user }) => {
         )
         .then((response) => {
           const rutinasDelAlumno = response.data;
-          setRutinas(rutinasDelAlumno); // Guardar todas las rutinas
+          setRutinas(rutinasDelAlumno);
+
           if (rutinasDelAlumno.length > 0) {
-            setSelectedRutina(rutinasDelAlumno[0]); // Seleccionar la primera rutina por defecto
+            setSelectedRutina(rutinasDelAlumno[0]);
+
+            // 🔍 Verificar estructura de los ejercicios dentro de la rutina
+            rutinasDelAlumno[0]?.semanas.forEach((semana, index) => {
+              semana.dias.forEach((dia, dayIndex) => {
+                dia.ejercicios.forEach((ejercicio, exIndex) => {
+                  // ✅ Revisar si la URL existe
+                });
+              });
+            });
           }
         })
         .catch((error) => console.error("Error al obtener rutinas:", error));
     }
-  }, []); // Array de dependencias vacío para ejecutar solo al cargar
+  }, []); // Ejecutar solo al cargar la página
 
-  const handleShowEjercicio = (ejercicio) => {
-    setSelectedEjercicio(ejercicio);
+  const handleShowEjercicio = (ejercicio, numeroSemana, dia) => {
+    const videoUrl =
+      ejercicio.video_url || ejercicio.ejercicio_id?.video_url || ""; // ✅ Asegurar que siempre haya una URL
+
+    if (!videoUrl) {
+      console.warn(
+        "⚠️ Este ejercicio no tiene una URL de video definida. Revisa la base de datos."
+      );
+    }
+
+    setSelectedEjercicio({
+      ...ejercicio,
+      numeroSemana,
+      dia,
+      video_url: videoUrl, // ✅ Asignar la URL correctamente
+    });
+
     setShowModal(true);
   };
 
@@ -63,33 +68,31 @@ const VerRutinas = ({ user }) => {
     setComentariosDiarios({ ...comentariosDiarios, [dia]: comentario });
   };
 
-  // Manejar el cambio del peso por serie
-  const handlePesoChange = (e, index) => {
-    const newPesoUtilizado = [...selectedEjercicio.peso_utilizado];
-    newPesoUtilizado[index] = e.target.value;
-    setSelectedEjercicio({
-      ...selectedEjercicio,
-      peso_utilizado: newPesoUtilizado,
-    });
-  };
-
-  // Guardar el progreso del alumno (peso utilizado y comentarios)
+  // Guardar el progreso del alumno (comentarios diarios)
   const handleSaveProgress = () => {
-    if (!selectedRutina) return; // Asegurarse de que hay una rutina seleccionada
-    const progreso = {
-      comentariosDiarios,
-      rutina: selectedRutina._id, // Usar la rutina seleccionada
-    };
+    if (!selectedRutina) return;
+    const progreso = { comentariosDiarios, rutina: selectedRutina._id };
 
     axios
-      .post(`${import.meta.env.VITE_BACKEND_URL}/api/progreso`, progreso) // Endpoint para guardar progreso
-      .then((response) => {
-        alert("Progreso guardado exitosamente");
-      })
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/progreso`, progreso)
+      .then(() => alert("Progreso guardado exitosamente"))
       .catch((error) => {
         console.error("Error al guardar el progreso:", error);
-        alert("Hubo un error al guardar el progreso");
+        alert("Hubo un error al guardar el progreso.");
       });
+  };
+
+  const fetchRutinaActualizada = (rutinaId) => {
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/rutinas/${rutinaId}`)
+      .then((response) => {
+        setSelectedRutina(response.data); // Actualizar la rutina sin recargar la página
+      })
+      .catch((error) => console.error("Error al actualizar rutina:", error));
+  };
+
+  const handleEjercicioChange = (rutinaId) => {
+    fetchRutinaActualizada(rutinaId);
   };
 
   return (
@@ -98,7 +101,7 @@ const VerRutinas = ({ user }) => {
       {rutinas.length > 0 ? (
         <>
           {/* Selector de rutinas */}
-          <Form.Group controlId="selectRutina" className="">
+          <Form.Group controlId="selectRutina">
             <Form.Label>Selecciona una rutina:</Form.Label>
             <Form.Select
               value={selectedRutina ? selectedRutina._id : ""}
@@ -123,6 +126,8 @@ const VerRutinas = ({ user }) => {
             <>
               <h3>{selectedRutina.nombre}</h3>
               <p>{selectedRutina.descripcion}</p>
+
+              {/* Pestañas de semanas */}
               <Nav
                 variant="tabs"
                 activeKey={activeSemana}
@@ -137,16 +142,20 @@ const VerRutinas = ({ user }) => {
                 ))}
               </Nav>
 
+              {/* Mostrar solo la semana activa */}
               {selectedRutina.semanas.length > 0 && (
                 <div className="mt-4">
                   <h4 className="text-black">
-                    Semana {selectedRutina.semanas[activeSemana].numeroSemana}
+                    Semana {selectedRutina.semanas[activeSemana]?.numeroSemana}
                   </h4>
-                  {selectedRutina.semanas[activeSemana].dias.map(
+                  {selectedRutina.semanas[activeSemana]?.dias.map(
                     (dia, dayIndex) => (
                       <DiaRutina
                         key={dayIndex}
                         dia={dia}
+                        numeroSemana={
+                          selectedRutina.semanas[activeSemana].numeroSemana
+                        }
                         selectedRutinaId={selectedRutina._id}
                         comentariosDiarios={comentariosDiarios}
                         handleShowEjercicio={handleShowEjercicio}
@@ -171,18 +180,16 @@ const VerRutinas = ({ user }) => {
       ) : (
         <p>Cargando rutinas...</p>
       )}
-
       {/* Modal para Detalles del Ejercicio */}
       <EjercicioModal
         showModal={showModal}
         setShowModal={setShowModal}
         selectedEjercicio={selectedEjercicio}
-        selectedRutinaId={selectedRutina ? selectedRutina._id : null} // Validación añadida
-        getEmbedUrl={getEmbedUrl}
+        selectedRutinaId={selectedRutina ? selectedRutina._id : null}
         handleEjercicioChange={(nuevoEjercicio) =>
           setSelectedEjercicio({ ...selectedEjercicio, ...nuevoEjercicio })
         }
-        handlePesoChange={handlePesoChange} // Pasar la función como prop
+        setSelectedEjercicio={setSelectedEjercicio} // ✅ Pasar la función al modal
       />
     </Container>
   );

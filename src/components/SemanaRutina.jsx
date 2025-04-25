@@ -12,6 +12,20 @@ const SemanaRutina = ({
   handleRepetirEjercicios, // Nueva función para repetir ejercicios
 }) => {
   const [activeSemana, setActiveSemana] = useState(0); // Semana activa (por índice)
+  const [searchTermEjercicio, setSearchTermEjercicio] = useState({});
+  const [mostrarListaEjercicios, setMostrarListaEjercicios] = useState({});
+  const handleSearchChange = (dia, value) => {
+    setSearchTermEjercicio((prevState) => ({
+      ...prevState,
+      [dia]: value,
+    }));
+  };
+  const filteredEjercicios = (dia) =>
+    ejercicios.filter((ejercicio) =>
+      ejercicio.nombre
+        .toLowerCase()
+        .includes(searchTermEjercicio[dia]?.toLowerCase() || "")
+    );
 
   return (
     <div>
@@ -167,25 +181,62 @@ const SemanaRutina = ({
 
               {/* Agregar Ejercicio */}
               <Form.Group
-                controlId={`selectEjercicio-${semanas[activeSemana].numeroSemana}-${dia.dia}`}
+                controlId={`buscarEjercicio-${semanas[activeSemana].numeroSemana}-${dia.dia}`}
               >
-                <Form.Label>Agregar Ejercicio</Form.Label>
-                <Form.Select
-                  onChange={(e) =>
-                    handleAddEjercicio(
-                      semanas[activeSemana].numeroSemana,
-                      dia.dia,
-                      ejercicios.find((ej) => ej._id === e.target.value)
-                    )
-                  }
-                >
-                  <option value="">Seleccionar Ejercicio</option>
-                  {ejercicios.map((ejercicio) => (
-                    <option key={ejercicio._id} value={ejercicio._id}>
-                      {ejercicio.nombre}
-                    </option>
-                  ))}
-                </Form.Select>
+                <Form.Label>Buscar y Agregar Ejercicio</Form.Label>
+                <div className="d-flex align-items-center">
+                  <Form.Control
+                    type="text"
+                    placeholder="Buscar ejercicio..."
+                    value={searchTermEjercicio[dia.dia] || ""}
+                    onChange={(e) =>
+                      handleSearchChange(dia.dia, e.target.value)
+                    }
+                  />
+                  <Button
+                    variant="outline-secondary"
+                    className="ms-2"
+                    onClick={() =>
+                      setMostrarListaEjercicios((prevState) => ({
+                        ...prevState,
+                        [dia.dia]: !prevState[dia.dia],
+                      }))
+                    }
+                  >
+                    ▼
+                  </Button>
+                </div>
+
+                {/* Lista desplegable solo para el día correspondiente */}
+                {(searchTermEjercicio[dia.dia] ||
+                  mostrarListaEjercicios[dia.dia]) && (
+                  <ul className="list-group mt-2">
+                    {filteredEjercicios(dia.dia).map((ejercicio) => (
+                      <li
+                        key={ejercicio._id}
+                        className="list-group-item"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          handleAddEjercicio(
+                            semanas[activeSemana].numeroSemana,
+                            dia.dia,
+                            ejercicio
+                          );
+                          setSearchTermEjercicio((prevState) => ({
+                            ...prevState,
+                            [dia.dia]: "",
+                          }));
+                          setMostrarListaEjercicios((prevState) => ({
+                            ...prevState,
+                            [dia.dia]: false,
+                          }));
+                        }}
+                      >
+                        {ejercicio.nombre}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </Form.Group>
             </div>
           ))}

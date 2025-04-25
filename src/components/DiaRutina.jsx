@@ -12,6 +12,7 @@ import axios from "axios";
 
 const DiaRutina = ({
   dia,
+  numeroSemana,
   selectedRutinaId,
   comentariosDiarios,
   handleShowEjercicio,
@@ -94,7 +95,13 @@ const DiaRutina = ({
                         <div className="d-flex justify-content-center">
                           <Button
                             variant="info"
-                            onClick={() => handleShowEjercicio(ejercicio)}
+                            onClick={() => {
+                              handleShowEjercicio(
+                                ejercicio,
+                                numeroSemana,
+                                dia.dia
+                              );
+                            }}
                             style={{ color: "white" }}
                           >
                             Ver Detalles

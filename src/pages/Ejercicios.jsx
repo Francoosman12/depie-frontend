@@ -3,6 +3,7 @@ import { Table, Button, Container, Modal, Form } from "react-bootstrap";
 import axios from "axios";
 import UpdateExerciseModal from "../components/UpdateExerciseModal";
 import AddExerciseModal from "../components/AddExerciseModal";
+import getEmbedUrl from "../utils/getEmbedUrl";
 
 const Ejercicios = () => {
   const [ejercicios, setEjercicios] = useState([]);
@@ -13,18 +14,6 @@ const Ejercicios = () => {
   const [selectedEjercicio, setSelectedEjercicio] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-
-  // Función para convertir un enlace a formato embed
-  const getEmbedUrl = (url) => {
-    if (url.includes("youtu.be")) {
-      const videoId = url.split("/").pop().split("?")[0];
-      return `https://www.youtube.com/embed/${videoId}`;
-    } else if (url.includes("watch?v=")) {
-      const videoId = url.split("v=")[1].split("&")[0];
-      return `https://www.youtube.com/embed/${videoId}`;
-    }
-    return url; // Devuelve la URL original si no requiere conversión
-  };
 
   // Obtener ejercicios del backend
   useEffect(() => {

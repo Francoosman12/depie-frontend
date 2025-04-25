@@ -25,7 +25,6 @@ const LoginModal = ({ show, handleClose, setUser }) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Usuario encontrado:", data.usuario);
 
         // Guardar token JWT y usuario en localStorage
         localStorage.setItem("token", data.token);
